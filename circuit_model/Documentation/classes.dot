@@ -1,0 +1,9 @@
+digraph "classes" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{SparseMatrix|matrix : csr_matrix\l|conjugate()\lconjugate_transpose()\ltranspose()\l}", shape="record"];
+"1" [label="{SquareMatrix|matrix : csr_matrix\l|}", shape="record"];
+"2" [label="{Vector|dimension\lmatrix : csc_matrix\ltype : str\l|}", shape="record"];
+"1" -> "0" [arrowhead="empty", arrowtail="none"];
+"2" -> "0" [arrowhead="empty", arrowtail="none"];
+}
