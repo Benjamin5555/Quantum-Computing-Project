@@ -7,6 +7,7 @@
         * Improved error messages & Error checking
         * Formatting of latex in transpose method
     * SparseMatrix:
+        * Raise to the power operator needs to be implemented !!
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
