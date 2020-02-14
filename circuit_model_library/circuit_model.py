@@ -1,6 +1,9 @@
 """This module details the main and specific functionality of the circuit model including 
 a functionality that will 'run' a circuit
 
+.. todo::
+    * Implementation of gate given a descion on exactly how it will be called/used
+
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
 """
@@ -31,14 +34,18 @@ class Gate(matrices.SquareMatrix):
         #Call the parent class constructor after verifying valid parameters for a gate  
         NotImplemented##
 
-class QuantumRegister(matrices.Vector):
-    """A vector like object that represents a quantum register
+
+
+class Qubit(matrices.Vector):
+    """A vector like object that represents a quantum bit (qubit) 
 
     Attributes:
+        state: A 2 dimensional vector representing the state of the Qubit 
 
+    .. todo:: Weirdly this may not be a required class consider whether it is needed
     """
     def __init__(self, bit_positions):
-        """Creates a quantum register object.
+        """Creates a qubit object.
         
         A quantum bit (qubit) is a system that can be observed in two unique states such as electron
         spin (can be up or down).
@@ -66,6 +73,28 @@ class QuantumRegister(matrices.Vector):
         super(scipy.sparse.coo_matrix((np.ones(bit_pos_shape,\
                                       (bit_positions, np.zeros(bit_pos_shape))))))
                 
+
+
+
+
+
+class QuantumRegister(matrices.Vector):
+    """A system of multiple qubits, abstractly the tensor product of multiple qubits .
+
+    Practically equivalent to the volatile memory of a CPU in a classical computer
+    Attributes:
+        register: The tensor product of quBits in the sytem under consideration
+    
+    """
+    def __init__(self):
+        """Initialise a quantum register with specific values
+        Args:
+            register_initial_state: Values related to the initial state of the regitster
+
+
+        """
+    
+    
 class QuantumCircuit():
     """An object representing a quantum circuit, can be used to run circuits on ...
     
