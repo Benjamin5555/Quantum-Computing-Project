@@ -15,6 +15,8 @@
         * Different init i.e. using a sparse array etc
     * Vector:
         * Different init i.e. using a sparse array etc
+Author(s): 
+ * Benjamin Carpenter(s1731178@ed.ac.uk)
 
 """
 from scipy.sparse import csc_matrix, csr_matrix

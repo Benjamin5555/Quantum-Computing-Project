@@ -73,3 +73,5 @@ class QuantumCircuit():
     """
     def __init__(self):
         NotImplemented
+
+    
