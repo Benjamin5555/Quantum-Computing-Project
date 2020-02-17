@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.4" />
+<title>circuit_model API documentation</title>
+<meta name="description" content="This module details the main and specific functionality of the circuit model including
+a functionality that will &#39;run&#39; a circuit
+.. todo::
+* …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>circuit_model</code></h1>
+</header>
+<section id="section-intro">
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<ul>
+<li>Implementation of gate given a decision on exactly how it will be called/used</li>
+<li>Current quantum circuit implementation will only work for 2x2 matricies, controlled not gates
+will not work</li>
+</ul>
+</div>
+<p>Author(s):
+* Benjamin Carpenter(s1731178@ed.ac.uk)</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;This module details the main and specific functionality of the circuit model including 
+a functionality that will &#39;run&#39; a circuit
+.. todo::
+    * Implementation of gate given a decision on exactly how it will be called/used
+    * Current quantum circuit implementation will only work for 2x2 matricies, controlled not gates 
+      will not work 
+
+Author(s): 
+ * Benjamin Carpenter(s1731178@ed.ac.uk)
+&#34;&#34;&#34;
+
+from circuit_model_library import matrices
+import scipy.sparse
+import numpy as np
+
+class Gate(matrices.SquareMatrix):
+    &#34;&#34;&#34;A class to implement gates, will share a large amount of functionality with a square matrix
+    but will require have a more specific criteria for what form a matrix can take as well as
+    likely requirng additional functionality
+    
+    Attributes:
+        gate_id: A unique identifier of the type of gate that the instance is
+        matrix: A matrix representing the operation of the gate
+    .. todo::
+        *Add verification so actual constraints on what a gate can be are observed (i.e. unitary)
+    &#34;&#34;&#34;
+    def __init__(self, gate_id, matrix):
+        &#34;&#34;&#34;Creates a gate object
+        Args:
+        Raises:
+            ValueError: On invalid form for a Quantum circuit gate
+        &#34;&#34;&#34;
+        #assert Hermatian, other requirments for a gate here
+
+        #Call the parent class constructor after verifying valid parameters for a gate  
+        self.gate_id = gate_id
+        super().__init__(matrix)
+
+class QuantumRegister(matrices.Vector):
+    &#34;&#34;&#34;A system of multiple qubits, abstractly the tensor product of multiple qubits .
+    Practically equivalent to the volatile memory of a CPU in a classical computer
+    Attributes:
+        register: The tensor product of quBits in the sytem under consideration
+    
+    &#34;&#34;&#34;
+    def __init__(self):
+        &#34;&#34;&#34;Initialise a quantum register with specific values
+        Args:
+            register_initial_state: Values related to the initial state of the regitster
+        &#34;&#34;&#34;
+        NotImplemented 
+
+
+
+
+
+class QuantumCircuit(object):
+    &#34;&#34;&#34;An object representing a quantum circuit, can be used to run circuits on ...
+    
+    Constructs circuit from a given set of gates and schematic using the fact that a series of gates
+    is the dot product of the gates (in reverse order i.e. applying \\(\hat{A} -&gt; \hat{B}\\) is 
+    equivlent to applying the gate \\(\hat{C} := \hat{B}\cdot\hat{A} \\) and applying parallel gates 
+    to the register is equivalent to the tensor product of these gates. By use of the Identity 
+    matrix we can create a matrix representing the circuit
+    &#34;&#34;&#34;
+    def __init__(self, circuit_string_list, gates_dictionary):
+        &#34;&#34;&#34;Creates a quantum circuit which a register can be run on, effecively creating a 
+        matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
+
+        ..image:: example_gates.png
+
+        This would be represented by a list of strings as [&#34;XIX&#34;,&#34;HXH&#34;] where I is the identity 
+        matix representing a gap 
+
+
+        Uses the fact that tensor product of a gate is 
+        
+        Args:
+            circuit_string_list: A list of strings representing each row of the quantum circuit 
+            where each character in the string relates to (or part of) a  quantum gate
+            gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
+            with id&#39;s matching that of those used in the circuit string 
+        
+        Raises:
+            TypeError: If non list of strings argument given for the circit_string_list
+        &#34;&#34;&#34;
+        reversed_strings = self._reverse_gate_string_list(circuit_string_list) 
+                
+                
+        #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
+        # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
+        reformed_strings = self._reform_data(reversed_strings)
+        
+        
+
+        # Go through each paralell gate in the list of parallel gates and replace each element with 
+        # an matrix representing its gate, then tensor product together the column
+        circuit_matrix_comp = []
+        for gate_id_column in reformed_strings:               
+            # Go through the whole column and replace each gate_id with actual gate matrix
+            gates_col = self._convert_gate_ids_to_gates(gate_id_column,gates_dictionary)            
+            
+            #Get tensor product of each &#39;column&#39; and add the column (now a single matrix) back to a
+            #list so it can be dotted together ata later point with the rest of the circuit matrix
+
+            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+            
+
+        # consider using fold left / right  !!!
+        # Dot each of these component gates together 
+                
+        #Technically is one massive Gate (or at least has same properties) consider use here?
+        self.circuit = self._scalar_product_gates(circuit_matrix_comp)         
+    
+    #Bam, a quCircuit that can be applied to a quRegister
+    
+    @staticmethod
+    def _scalar_product_gates(gates):
+        &#34;&#34;&#34;Gets the scalar (dot) product of a list of gates
+        e.g. a list [a,b,c,d] of gates -&gt; a . b . c . d where . is the scalar product is returned
+        Args:
+            gates: A list of multiple gates to get the scalar product of
+
+        Returns: 
+            The scalar product of the passed array of gates
+        &#34;&#34;&#34;
+        returnGate = np.array(gates[0])
+        for column in gates[1:]:
+            returnGate = returnGate.dot(column)
+        
+        return returnGate
+    
+
+
+    @staticmethod
+    def _tensor_product_gates(gates):
+        &#34;&#34;&#34;Gets the tensor product of a list of gates
+        e.g. a list [a,b,c,d] of gates -&gt; a x b x c x d where x is the tensor product is returned
+        Args:
+            gates: A list of multiple gates to get the tensor product of
+
+        Returns: 
+            The tensor product of the passed array of gates
+        &#34;&#34;&#34;
+
+        #Tensor product together the first two elelments of our &#39;column&#39; so we have something to
+        #work on with the for loop for the rest of the &#39;column&#39;   
+        product = gates[0].tensor_product(gates[1]) 
+
+        #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
+        if len(gates) &gt; 2: 
+            for gate in gates[2:]: 
+                product = product.tensor_product(gate) 
+        return product
+
+    
+    @staticmethod
+    def _convert_gate_ids_to_gates(gate_ids,gates_dictionary):
+            &#34;&#34;&#34;
+            Goes through a list of gate id&#39;s and converts into a list of gates, preserving order
+            
+            Args:
+                gate_ids: A list of gate_ids to be converted to actual gates
+                gates_dictionary: A dictionary of gate id&#39;s and the coresponding gates
+
+            Returns:
+                A list of gates in the same order as the list of gate_id&#39;s
+            &#34;&#34;&#34;
+            gates = []
+            for gate_id in gate_ids:
+                
+                gates.append(gates_dictionary[gate_id]) # Replace the gate_id with the 
+                                                        # actual gate
+            return gates
+
+
+    @staticmethod
+    def _reverse_gate_string_list(circuit_string_list):
+            &#34;&#34;&#34;Reverse each row for dotting and applying in correct order later on 
+
+            Args:
+                circuit_string_list: A list of strings each of which represents a series of gates in
+                                     the quantum circuit to be generated
+            &#34;&#34;&#34;
+            returnList = [] 
+            for x in circuit_string_list:
+                returnList.append(list(x[::-1])) # Reverses the string in place and convert to list 
+                                             # e.g. &#34;ABC&#34; -&gt; [&#39;A&#39;,&#39;B&#39;,&#39;C&#39;]
+            return returnList
+
+    @staticmethod
+    def _reform_data(oppDat):
+        &#34;&#34;&#34;Helper function that takes a list of lists and returns an arrays of a single variables 
+        i.e. [[a1,b1,c1,d1],[a2,b2,c2,d2]]  -&gt; [[a1,a2],[b1,b2],[c1,c2],[d1,d2]]
+        &#34;&#34;&#34;
+        lenIndi = len(oppDat[0])
+        rDat = []
+        for i in range(len(oppDat[0])):#Better ways of doing but creates an empty 
+                                       #array of data
+            rDat.append([])
+        oppDat = np.array(oppDat).flatten()#Create 1D long list from given 2D list
+        for i in range(len(oppDat)): 
+            rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
+                                              #position using mod
+        return rDat  
+
+
+class Qubit(matrices.Vector):
+    &#34;&#34;&#34;A vector like object that represents a quantum bit (qubit)
+    Attributes:
+        state: A 2 dimensional vector representing the state of the Qubit
+    .. todo:: Weirdly this may not be a required class consider whether it is needed
+    &#34;&#34;&#34;
+    def __init__(self, bit_positions):
+        &#34;&#34;&#34;Creates a qubit object.
+        A quantum bit (qubit) is a system that can be observed in two unique states such as electron
+        spin (can be up or down).
+        A qubit is a vector in a Hilbert space (n-dimensional vector space) where \\(n\\) quibits
+        will represent \\(2^n\\) dimensional Hilbert space.
+        Each state is a basis of the Hilbert space, for example in a 2 qubit system we get the basis
+        of a zero and one ket.
+        A qubit is unique in that it can be in a superposition of the different states allowing for
+        an increased number of values being represented
+        Differs from a vector in that the contructor argument is simply positions of ones
+        Args:
+            bit_positions: A list of positions of ones in the quantum register
+        &#34;&#34;&#34;
+        bit_pos_shape = np.shape(bit_positions)
+
+
+        #Call the constructor of the vector class for a one&#39;d sparse matrix at the specified bit
+        #positions
+        super(scipy.sparse.coo_matrix((np.ones(bit_pos_shape,\
+                                      (bit_positions, np.zeros(bit_pos_shape))))))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="circuit_model.Gate"><code class="flex name class">
+<span>class <span class="ident">Gate</span></span>
+<span>(</span><span>gate_id, matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A class to implement gates, will share a large amount of functionality with a square matrix
+but will require have a more specific criteria for what form a matrix can take as well as
+likely requirng additional functionality</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>gate_id</code></strong></dt>
+<dd>A unique identifier of the type of gate that the instance is</dd>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>A matrix representing the operation of the gate</dd>
+</dl>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<p>*Add verification so actual constraints on what a gate can be are observed (i.e. unitary)</p>
+</div>
+<p>Creates a gate object
+Args:</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>On invalid form for a Quantum circuit gate</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gate(matrices.SquareMatrix):
+    &#34;&#34;&#34;A class to implement gates, will share a large amount of functionality with a square matrix
+    but will require have a more specific criteria for what form a matrix can take as well as
+    likely requirng additional functionality
+    
+    Attributes:
+        gate_id: A unique identifier of the type of gate that the instance is
+        matrix: A matrix representing the operation of the gate
+    .. todo::
+        *Add verification so actual constraints on what a gate can be are observed (i.e. unitary)
+    &#34;&#34;&#34;
+    def __init__(self, gate_id, matrix):
+        &#34;&#34;&#34;Creates a gate object
+        Args:
+        Raises:
+            ValueError: On invalid form for a Quantum circuit gate
+        &#34;&#34;&#34;
+        #assert Hermatian, other requirments for a gate here
+
+        #Call the parent class constructor after verifying valid parameters for a gate  
+        self.gate_id = gate_id
+        super().__init__(matrix)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>circuit_model_library.matrices.SquareMatrix</li>
+<li>circuit_model_library.matrices.SparseMatrix</li>
+</ul>
+</dd>
+<dt id="circuit_model.QuantumCircuit"><code class="flex name class">
+<span>class <span class="ident">QuantumCircuit</span></span>
+<span>(</span><span>circuit_string_list, gates_dictionary)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>An object representing a quantum circuit, can be used to run circuits on &hellip;</p>
+<p>Constructs circuit from a given set of gates and schematic using the fact that a series of gates
+is the dot product of the gates (in reverse order i.e. applying <span><span class="MathJax_Preview">\hat{A} -&gt; \hat{B}</span><script type="math/tex">\hat{A} -> \hat{B}</script></span> is
+equivlent to applying the gate <span><span class="MathJax_Preview">\hat{C} := \hat{B}\cdot\hat{A} </span><script type="math/tex">\hat{C} := \hat{B}\cdot\hat{A} </script></span> and applying parallel gates
+to the register is equivalent to the tensor product of these gates. By use of the Identity
+matrix we can create a matrix representing the circuit</p>
+<p>Creates a quantum circuit which a register can be run on, effecively creating a
+matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown</p>
+<p><img alt="" src="example_gates.png"></p>
+<p>This would be represented by a list of strings as ["XIX","HXH"] where I is the identity
+matix representing a gap </p>
+<p>Uses the fact that tensor product of a gate is </p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>circuit_string_list</code></strong></dt>
+<dd>A list of strings representing each row of the quantum circuit </dd>
+<dt>where each character in the string relates to (or part of) a
+quantum gate</dt>
+<dt><strong><code>gates_dictionary</code></strong></dt>
+<dd>A dictionary of gate objects relating to those used in the circuit </dd>
+</dl>
+<p>with id's matching that of those used in the circuit string </p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>TypeError</code></strong></dt>
+<dd>If non list of strings argument given for the circit_string_list</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantumCircuit(object):
+    &#34;&#34;&#34;An object representing a quantum circuit, can be used to run circuits on ...
+    
+    Constructs circuit from a given set of gates and schematic using the fact that a series of gates
+    is the dot product of the gates (in reverse order i.e. applying \\(\hat{A} -&gt; \hat{B}\\) is 
+    equivlent to applying the gate \\(\hat{C} := \hat{B}\cdot\hat{A} \\) and applying parallel gates 
+    to the register is equivalent to the tensor product of these gates. By use of the Identity 
+    matrix we can create a matrix representing the circuit
+    &#34;&#34;&#34;
+    def __init__(self, circuit_string_list, gates_dictionary):
+        &#34;&#34;&#34;Creates a quantum circuit which a register can be run on, effecively creating a 
+        matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
+
+        ..image:: example_gates.png
+
+        This would be represented by a list of strings as [&#34;XIX&#34;,&#34;HXH&#34;] where I is the identity 
+        matix representing a gap 
+
+
+        Uses the fact that tensor product of a gate is 
+        
+        Args:
+            circuit_string_list: A list of strings representing each row of the quantum circuit 
+            where each character in the string relates to (or part of) a  quantum gate
+            gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
+            with id&#39;s matching that of those used in the circuit string 
+        
+        Raises:
+            TypeError: If non list of strings argument given for the circit_string_list
+        &#34;&#34;&#34;
+        reversed_strings = self._reverse_gate_string_list(circuit_string_list) 
+                
+                
+        #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
+        # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
+        reformed_strings = self._reform_data(reversed_strings)
+        
+        
+
+        # Go through each paralell gate in the list of parallel gates and replace each element with 
+        # an matrix representing its gate, then tensor product together the column
+        circuit_matrix_comp = []
+        for gate_id_column in reformed_strings:               
+            # Go through the whole column and replace each gate_id with actual gate matrix
+            gates_col = self._convert_gate_ids_to_gates(gate_id_column,gates_dictionary)            
+            
+            #Get tensor product of each &#39;column&#39; and add the column (now a single matrix) back to a
+            #list so it can be dotted together ata later point with the rest of the circuit matrix
+
+            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+            
+
+        # consider using fold left / right  !!!
+        # Dot each of these component gates together 
+                
+        #Technically is one massive Gate (or at least has same properties) consider use here?
+        self.circuit = self._scalar_product_gates(circuit_matrix_comp)         
+    
+    #Bam, a quCircuit that can be applied to a quRegister
+    
+    @staticmethod
+    def _scalar_product_gates(gates):
+        &#34;&#34;&#34;Gets the scalar (dot) product of a list of gates
+        e.g. a list [a,b,c,d] of gates -&gt; a . b . c . d where . is the scalar product is returned
+        Args:
+            gates: A list of multiple gates to get the scalar product of
+
+        Returns: 
+            The scalar product of the passed array of gates
+        &#34;&#34;&#34;
+        returnGate = np.array(gates[0])
+        for column in gates[1:]:
+            returnGate = returnGate.dot(column)
+        
+        return returnGate
+    
+
+
+    @staticmethod
+    def _tensor_product_gates(gates):
+        &#34;&#34;&#34;Gets the tensor product of a list of gates
+        e.g. a list [a,b,c,d] of gates -&gt; a x b x c x d where x is the tensor product is returned
+        Args:
+            gates: A list of multiple gates to get the tensor product of
+
+        Returns: 
+            The tensor product of the passed array of gates
+        &#34;&#34;&#34;
+
+        #Tensor product together the first two elelments of our &#39;column&#39; so we have something to
+        #work on with the for loop for the rest of the &#39;column&#39;   
+        product = gates[0].tensor_product(gates[1]) 
+
+        #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
+        if len(gates) &gt; 2: 
+            for gate in gates[2:]: 
+                product = product.tensor_product(gate) 
+        return product
+
+    
+    @staticmethod
+    def _convert_gate_ids_to_gates(gate_ids,gates_dictionary):
+            &#34;&#34;&#34;
+            Goes through a list of gate id&#39;s and converts into a list of gates, preserving order
+            
+            Args:
+                gate_ids: A list of gate_ids to be converted to actual gates
+                gates_dictionary: A dictionary of gate id&#39;s and the coresponding gates
+
+            Returns:
+                A list of gates in the same order as the list of gate_id&#39;s
+            &#34;&#34;&#34;
+            gates = []
+            for gate_id in gate_ids:
+                
+                gates.append(gates_dictionary[gate_id]) # Replace the gate_id with the 
+                                                        # actual gate
+            return gates
+
+
+    @staticmethod
+    def _reverse_gate_string_list(circuit_string_list):
+            &#34;&#34;&#34;Reverse each row for dotting and applying in correct order later on 
+
+            Args:
+                circuit_string_list: A list of strings each of which represents a series of gates in
+                                     the quantum circuit to be generated
+            &#34;&#34;&#34;
+            returnList = [] 
+            for x in circuit_string_list:
+                returnList.append(list(x[::-1])) # Reverses the string in place and convert to list 
+                                             # e.g. &#34;ABC&#34; -&gt; [&#39;A&#39;,&#39;B&#39;,&#39;C&#39;]
+            return returnList
+
+    @staticmethod
+    def _reform_data(oppDat):
+        &#34;&#34;&#34;Helper function that takes a list of lists and returns an arrays of a single variables 
+        i.e. [[a1,b1,c1,d1],[a2,b2,c2,d2]]  -&gt; [[a1,a2],[b1,b2],[c1,c2],[d1,d2]]
+        &#34;&#34;&#34;
+        lenIndi = len(oppDat[0])
+        rDat = []
+        for i in range(len(oppDat[0])):#Better ways of doing but creates an empty 
+                                       #array of data
+            rDat.append([])
+        oppDat = np.array(oppDat).flatten()#Create 1D long list from given 2D list
+        for i in range(len(oppDat)): 
+            rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
+                                              #position using mod
+        return rDat  </code></pre>
+</details>
+</dd>
+<dt id="circuit_model.QuantumRegister"><code class="flex name class">
+<span>class <span class="ident">QuantumRegister</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>A system of multiple qubits, abstractly the tensor product of multiple qubits .
+Practically equivalent to the volatile memory of a CPU in a classical computer</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>register</code></strong></dt>
+<dd>The tensor product of quBits in the sytem under consideration</dd>
+</dl>
+<p>Initialise a quantum register with specific values</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>register_initial_state</code></strong></dt>
+<dd>Values related to the initial state of the regitster</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantumRegister(matrices.Vector):
+    &#34;&#34;&#34;A system of multiple qubits, abstractly the tensor product of multiple qubits .
+    Practically equivalent to the volatile memory of a CPU in a classical computer
+    Attributes:
+        register: The tensor product of quBits in the sytem under consideration
+    
+    &#34;&#34;&#34;
+    def __init__(self):
+        &#34;&#34;&#34;Initialise a quantum register with specific values
+        Args:
+            register_initial_state: Values related to the initial state of the regitster
+        &#34;&#34;&#34;
+        NotImplemented </code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>circuit_model_library.matrices.Vector</li>
+<li>circuit_model_library.matrices.SparseMatrix</li>
+</ul>
+</dd>
+<dt id="circuit_model.Qubit"><code class="flex name class">
+<span>class <span class="ident">Qubit</span></span>
+<span>(</span><span>bit_positions)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A vector like object that represents a quantum bit (qubit)</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>state</code></strong></dt>
+<dd>A 2 dimensional vector representing the state of the Qubit</dd>
+</dl>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<p>Weirdly this may not be a required class consider whether it is needed</p>
+</div>
+<p>Creates a qubit object.
+A quantum bit (qubit) is a system that can be observed in two unique states such as electron
+spin (can be up or down).
+A qubit is a vector in a Hilbert space (n-dimensional vector space) where <span><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span> quibits
+will represent <span><span class="MathJax_Preview">2^n</span><script type="math/tex">2^n</script></span> dimensional Hilbert space.
+Each state is a basis of the Hilbert space, for example in a 2 qubit system we get the basis
+of a zero and one ket.
+A qubit is unique in that it can be in a superposition of the different states allowing for
+an increased number of values being represented
+Differs from a vector in that the contructor argument is simply positions of ones</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>bit_positions</code></strong></dt>
+<dd>A list of positions of ones in the quantum register</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Qubit(matrices.Vector):
+    &#34;&#34;&#34;A vector like object that represents a quantum bit (qubit)
+    Attributes:
+        state: A 2 dimensional vector representing the state of the Qubit
+    .. todo:: Weirdly this may not be a required class consider whether it is needed
+    &#34;&#34;&#34;
+    def __init__(self, bit_positions):
+        &#34;&#34;&#34;Creates a qubit object.
+        A quantum bit (qubit) is a system that can be observed in two unique states such as electron
+        spin (can be up or down).
+        A qubit is a vector in a Hilbert space (n-dimensional vector space) where \\(n\\) quibits
+        will represent \\(2^n\\) dimensional Hilbert space.
+        Each state is a basis of the Hilbert space, for example in a 2 qubit system we get the basis
+        of a zero and one ket.
+        A qubit is unique in that it can be in a superposition of the different states allowing for
+        an increased number of values being represented
+        Differs from a vector in that the contructor argument is simply positions of ones
+        Args:
+            bit_positions: A list of positions of ones in the quantum register
+        &#34;&#34;&#34;
+        bit_pos_shape = np.shape(bit_positions)
+
+
+        #Call the constructor of the vector class for a one&#39;d sparse matrix at the specified bit
+        #positions
+        super(scipy.sparse.coo_matrix((np.ones(bit_pos_shape,\
+                                      (bit_positions, np.zeros(bit_pos_shape))))))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>circuit_model_library.matrices.Vector</li>
+<li>circuit_model_library.matrices.SparseMatrix</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="circuit_model.Gate" href="#circuit_model.Gate">Gate</a></code></h4>
+</li>
+<li>
+<h4><code><a title="circuit_model.QuantumCircuit" href="#circuit_model.QuantumCircuit">QuantumCircuit</a></code></h4>
+</li>
+<li>
+<h4><code><a title="circuit_model.QuantumRegister" href="#circuit_model.QuantumRegister">QuantumRegister</a></code></h4>
+</li>
+<li>
+<h4><code><a title="circuit_model.Qubit" href="#circuit_model.Qubit">Qubit</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

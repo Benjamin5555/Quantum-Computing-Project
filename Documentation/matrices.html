@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>circuit_model_library.matrices API documentation</title>
+<title>matrices API documentation</title>
 <meta name="description" content="Selection of classes that represent matricies and Vectors implemented using sparse matricies …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -18,7 +18,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>circuit_model_library.matrices</code></h1>
+<h1 class="title">Module <code>matrices</code></h1>
 </header>
 <section id="section-intro">
 <p>Selection of classes that represent matricies and Vectors implemented using sparse matricies </p>
@@ -32,22 +32,23 @@
 </ul>
 </li>
 <li>SparseMatrix:<ul>
-<li>Raise to the power operator needs to be implemented !!</li>
 <li>Support addition of a scalar value (i.e. scalar* identity matrix)</li>
 <li>Different way of accesing an element of a matrix i.e. more efficient methods
 also zero index?</li>
 </ul>
 </li>
 <li>SquareMatrix:<ul>
-<li>Different init i.e. using a sparse array etc</li>
+<li>Different init i.e. using a sparse array?</li>
 </ul>
 </li>
 <li>Vector:<ul>
-<li>Different init i.e. using a sparse array etc</li>
+<li>Different init i.e. using a sparse array?</li>
 </ul>
 </li>
 </ul>
 </div>
+<p>Author(s):
+* Benjamin Carpenter(s1731178@ed.ac.uk)</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -61,20 +62,21 @@ also zero index?</li>
         * Improved error messages &amp; Error checking
         * Formatting of latex in transpose method
     * SparseMatrix:
-        * Raise to the power operator needs to be implemented !!
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
     * SquareMatrix:
-        * Different init i.e. using a sparse array etc
+        * Different init i.e. using a sparse array?
     * Vector:
-        * Different init i.e. using a sparse array etc
+        * Different init i.e. using a sparse array?
+Author(s):
+    * Benjamin Carpenter(s1731178@ed.ac.uk)
 
 &#34;&#34;&#34;
-from scipy.sparse import csc_matrix, csr_matrix
+from scipy.sparse import csc_matrix, csr_matrix, kron
 import numpy as np
 
-class SparseMatrix():
+class SparseMatrix(object):
     &#34;&#34;&#34;A general representation of a sparse matrix with common functionality for matrices:
       Addition, subtraction, matrix multiplication and Equality checking 
 
@@ -87,10 +89,36 @@ class SparseMatrix():
         assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
 
+    def tensor_product(self,matrix):
+        &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: Testing, better commenting and checking this is actually the correct operation
+        &#34;&#34;&#34;
+        return kron(self.matrix, matrix.matrix)
+    
+    def dot(self,matrix):
+        &#34;&#34;&#34;dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        &#34;&#34;&#34;
+        return self.matrix.dot(matrix)
+
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
 
-    def __getitem__(self,index):
+    def __getitem__(self, index):
         return self.matrix.A[index]
 
     def __add__(self,matrix):
@@ -179,7 +207,13 @@ class SparseMatrix():
             Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
         &#34;&#34;&#34;
         return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit
-
+    
+    def __pow__(self,exponent):
+        &#34;&#34;&#34;
+        Returns:
+            Original matrix raised to the argument power
+        &#34;&#34;&#34;
+        NotImplemented
     
 class SquareMatrix(SparseMatrix):
     &#34;&#34;&#34;Sparse square matrix that provides basic functionallity
@@ -246,7 +280,7 @@ class Vector(SparseMatrix):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="circuit_model_library.matrices.SparseMatrix"><code class="flex name class">
+<dt id="matrices.SparseMatrix"><code class="flex name class">
 <span>class <span class="ident">SparseMatrix</span></span>
 <span>(</span><span>matrix)</span>
 </code></dt>
@@ -264,7 +298,7 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SparseMatrix():
+<pre><code class="python">class SparseMatrix(object):
     &#34;&#34;&#34;A general representation of a sparse matrix with common functionality for matrices:
       Addition, subtraction, matrix multiplication and Equality checking 
 
@@ -277,10 +311,36 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
         assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
 
+    def tensor_product(self,matrix):
+        &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: Testing, better commenting and checking this is actually the correct operation
+        &#34;&#34;&#34;
+        return kron(self.matrix, matrix.matrix)
+    
+    def dot(self,matrix):
+        &#34;&#34;&#34;dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        &#34;&#34;&#34;
+        return self.matrix.dot(matrix)
+
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
 
-    def __getitem__(self,index):
+    def __getitem__(self, index):
         return self.matrix.A[index]
 
     def __add__(self,matrix):
@@ -368,16 +428,23 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
         Returns:
             Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
         &#34;&#34;&#34;
-        return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit</code></pre>
+        return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit
+    
+    def __pow__(self,exponent):
+        &#34;&#34;&#34;
+        Returns:
+            Original matrix raised to the argument power
+        &#34;&#34;&#34;
+        NotImplemented</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="circuit_model_library.matrices.SquareMatrix" href="#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></li>
-<li><a title="circuit_model_library.matrices.Vector" href="#circuit_model_library.matrices.Vector">Vector</a></li>
+<li><a title="matrices.SquareMatrix" href="#matrices.SquareMatrix">SquareMatrix</a></li>
+<li><a title="matrices.Vector" href="#matrices.Vector">Vector</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="circuit_model_library.matrices.SparseMatrix.conjugate"><code class="name flex">
+<dt id="matrices.SparseMatrix.conjugate"><code class="name flex">
 <span>def <span class="ident">conjugate</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -395,7 +462,7 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
     return type(self)(self.matrix.conjugate())#SEE __add__ for type(self) bit</code></pre>
 </details>
 </dd>
-<dt id="circuit_model_library.matrices.SparseMatrix.conjugate_transpose"><code class="name flex">
+<dt id="matrices.SparseMatrix.conjugate_transpose"><code class="name flex">
 <span>def <span class="ident">conjugate_transpose</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -413,7 +480,78 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
     return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit</code></pre>
 </details>
 </dd>
-<dt id="circuit_model_library.matrices.SparseMatrix.transpose"><code class="name flex">
+<dt id="matrices.SparseMatrix.dot"><code class="name flex">
+<span>def <span class="ident">dot</span></span>(<span>self, matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>dot/scalar product of two matrices</p>
+<h2 id="args">Args</h2>
+<p>matrix:A matrix, the same dimensions as the current matrix that will to be dotted with</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>The</code> <code>dot</code> (<code>scalar</code>) <code>product</code> of <code>two</code> <a title="matrices" href="#matrices"><code>matrices</code></a> <code>A</code> <code>and</code> <code>B</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>TypeError</code></strong></dt>
+<dd>on invalid maticie sizes</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dot(self,matrix):
+    &#34;&#34;&#34;dot/scalar product of two matrices
+
+    Args:
+        matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+    Returns:
+        The dot (scalar) product of two matrices A and B
+    
+    Raises:
+        TypeError: on invalid maticie sizes 
+    &#34;&#34;&#34;
+    return self.matrix.dot(matrix)</code></pre>
+</details>
+</dd>
+<dt id="matrices.SparseMatrix.tensor_product"><code class="name flex">
+<span>def <span class="ident">tensor_product</span></span>(<span>self, matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the kronker product of this
+matrix with another, when applied to a vector
+returns the tensor product a specific case of the kronker product</p>
+<h2 id="args">Args</h2>
+<p>matrix:A sparse matrix acting as the right hand side of the product</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>A</code> <code>sparse</code> <code>matrix</code> <code>representation</code> of <code>self</code> (`otimes<code>\)</code>matrixB`</dt>
+<dd>&nbsp;</dd>
+</dl>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<p>Testing, better commenting and checking this is actually the correct operation</p>
+</div></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tensor_product(self,matrix):
+    &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+    returns the tensor product a specific case of the kronker product
+    Args:
+        matrix:A sparse matrix acting as the right hand side of the product
+
+    Returns:
+        A sparse matrix representation of self \\(\otimes\\) matrixB
+
+    .. todo:: Testing, better commenting and checking this is actually the correct operation
+    &#34;&#34;&#34;
+    return kron(self.matrix, matrix.matrix)</code></pre>
+</details>
+</dd>
+<dt id="matrices.SparseMatrix.transpose"><code class="name flex">
 <span>def <span class="ident">transpose</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -438,7 +576,7 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
 </dd>
 </dl>
 </dd>
-<dt id="circuit_model_library.matrices.SquareMatrix"><code class="flex name class">
+<dt id="matrices.SquareMatrix"><code class="flex name class">
 <span>class <span class="ident">SquareMatrix</span></span>
 <span>(</span><span>matrix)</span>
 </code></dt>
@@ -486,20 +624,22 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
+<li><a title="matrices.SparseMatrix" href="#matrices.SparseMatrix">SparseMatrix</a></li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></b></code>:
+<li><code><b><a title="matrices.SparseMatrix" href="#matrices.SparseMatrix">SparseMatrix</a></b></code>:
 <ul class="hlist">
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate" href="#matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate_transpose" href="#matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.dot" href="#matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="matrices.SparseMatrix.tensor_product" href="#matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="matrices.SparseMatrix.transpose" href="#matrices.SparseMatrix.transpose">transpose</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="circuit_model_library.matrices.Vector"><code class="flex name class">
+<dt id="matrices.Vector"><code class="flex name class">
 <span>class <span class="ident">Vector</span></span>
 <span>(</span><span>matrix)</span>
 </code></dt>
@@ -566,15 +706,17 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
+<li><a title="matrices.SparseMatrix" href="#matrices.SparseMatrix">SparseMatrix</a></li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></b></code>:
+<li><code><b><a title="matrices.SparseMatrix" href="#matrices.SparseMatrix">SparseMatrix</a></b></code>:
 <ul class="hlist">
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate" href="#matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate_transpose" href="#matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.dot" href="#matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="matrices.SparseMatrix.tensor_product" href="#matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="matrices.SparseMatrix.transpose" href="#matrices.SparseMatrix.transpose">transpose</a></code></li>
 </ul>
 </li>
 </ul>
@@ -588,26 +730,23 @@ Addition, subtraction, matrix multiplication and Equality checking </p>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3>Super-module</h3>
-<ul>
-<li><code><a title="circuit_model_library" href="index.html">circuit_model_library</a></code></li>
-</ul>
-</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></code></h4>
+<h4><code><a title="matrices.SparseMatrix" href="#matrices.SparseMatrix">SparseMatrix</a></code></h4>
 <ul class="">
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
-<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate" href="#matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="matrices.SparseMatrix.conjugate_transpose" href="#matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="matrices.SparseMatrix.dot" href="#matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="matrices.SparseMatrix.tensor_product" href="#matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="matrices.SparseMatrix.transpose" href="#matrices.SparseMatrix.transpose">transpose</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="circuit_model_library.matrices.SquareMatrix" href="#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></code></h4>
+<h4><code><a title="matrices.SquareMatrix" href="#matrices.SquareMatrix">SquareMatrix</a></code></h4>
 </li>
 <li>
-<h4><code><a title="circuit_model_library.matrices.Vector" href="#circuit_model_library.matrices.Vector">Vector</a></code></h4>
+<h4><code><a title="matrices.Vector" href="#matrices.Vector">Vector</a></code></h4>
 </li>
 </ul>
 </li>

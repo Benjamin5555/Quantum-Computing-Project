@@ -2,6 +2,9 @@
 a functionality that will 'run' a circuit
 .. todo::
     * Implementation of gate given a decision on exactly how it will be called/used
+    * Current quantum circuit implementation will only work for 2x2 matricies, controlled not gates 
+      will not work 
+
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
 """
@@ -61,7 +64,16 @@ class QuantumCircuit(object):
     matrix we can create a matrix representing the circuit
     """
     def __init__(self, circuit_string_list, gates_dictionary):
-        """Creates a quantum circuit which a register can be run on
+        """Creates a quantum circuit which a register can be run on, effecively creating a 
+        matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
+
+        ..image:: example_gates.png
+
+        This would be represented by a list of strings as ["XIX","HXH"] where I is the identity 
+        matix representing a gap 
+
+
+        Uses the fact that tensor product of a gate is 
         
         Args:
             circuit_string_list: A list of strings representing each row of the quantum circuit 
@@ -72,56 +84,109 @@ class QuantumCircuit(object):
         Raises:
             TypeError: If non list of strings argument given for the circit_string_list
         """
-        
-        #Reverse each row for dotting and applying in correct order later on 
-        returnList = []
-        for x in circuit_string_list:
-            returnList.append(list(x[::-1])) # Reverses the string in place and convert to list 
-                                             # e.g. "ABC" -> ['A','B','C']
-        #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
-        #to [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
-        circuit_string_list = self._reform_data(returnList)
-        
-        #Convert to actual gates rather than ID's
-        circuit_matrix_comp = []
-        
-        
-        for gate_column in circuit_string_list:# Go through each paralell gate in the list of 
-                                               # paralell gates and replace each element with an 
-                                               # matrix representing its gate, then 
-                                               # tensor product together the column
-            current_column = []
-
-
-            # Go through the whole column and replace each gate_id with actual gate matrix
-            for gate_id in gate_column:
+        reversed_strings = self._reverse_gate_string_list(circuit_string_list) 
                 
-                current_column.append(gates_dictionary[gate_id]) #'Replace the gate_id with the 
-                                                                 # actual gate
-            #Get tensor product of each 'column'
+                
+        #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
+        # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
+        reformed_strings = self._reform_data(reversed_strings)
+        
+        
 
-            #Tensor product together the first two elelments of our 'column' so we have something to
-            #work on with the for loop for the rest of the 'column'   
-            column_product = current_column[0].tensor_product(current_column[1]) 
+        # Go through each paralell gate in the list of parallel gates and replace each element with 
+        # an matrix representing its gate, then tensor product together the column
+        circuit_matrix_comp = []
+        for gate_id_column in reformed_strings:               
+            # Go through the whole column and replace each gate_id with actual gate matrix
+            gates_col = self._convert_gate_ids_to_gates(gate_id_column,gates_dictionary)            
+            
+            #Get tensor product of each 'column' and add the column (now a single matrix) back to a
+            #list so it can be dotted together ata later point with the rest of the circuit matrix
 
-            #Apply tensor product to rest of the 'column' (though only if there are more elements)
-            if len(current_column) > 2: 
-                for gate in current_column[2:]: 
-                    column_product = column_product.tensor_product(gate) 
-            #Add the column (now a single matrix) back to a list so it can be dotted together at 
-            #a later point with the rest of the circuit matrix
-            circuit_matrix_comp.append(column_product)             
+            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+            
 
         # consider using fold left / right  !!!
         # Dot each of these component gates together 
-        circuit = np.array(circuit_matrix_comp[0])
-        for column in circuit_matrix_comp[1:]:
-            circuit = circuit.dot(column)
-        
+                
         #Technically is one massive Gate (or at least has same properties) consider use here?
-        print(circuit.A )        
+        self.circuit = self._scalar_product_gates(circuit_matrix_comp)         
     
     #Bam, a quCircuit that can be applied to a quRegister
+    
+    @staticmethod
+    def _scalar_product_gates(gates):
+        """Gets the scalar (dot) product of a list of gates
+        e.g. a list [a,b,c,d] of gates -> a . b . c . d where . is the scalar product is returned
+        Args:
+            gates: A list of multiple gates to get the scalar product of
+
+        Returns: 
+            The scalar product of the passed array of gates
+        """
+        returnGate = np.array(gates[0])
+        for column in gates[1:]:
+            returnGate = returnGate.dot(column)
+        
+        return returnGate
+    
+
+
+    @staticmethod
+    def _tensor_product_gates(gates):
+        """Gets the tensor product of a list of gates
+        e.g. a list [a,b,c,d] of gates -> a x b x c x d where x is the tensor product is returned
+        Args:
+            gates: A list of multiple gates to get the tensor product of
+
+        Returns: 
+            The tensor product of the passed array of gates
+        """
+
+        #Tensor product together the first two elelments of our 'column' so we have something to
+        #work on with the for loop for the rest of the 'column'   
+        product = gates[0].tensor_product(gates[1]) 
+
+        #Apply tensor product to rest of the 'column' (though only if there are more elements)
+        if len(gates) > 2: 
+            for gate in gates[2:]: 
+                product = product.tensor_product(gate) 
+        return product
+
+    
+    @staticmethod
+    def _convert_gate_ids_to_gates(gate_ids,gates_dictionary):
+            """
+            Goes through a list of gate id's and converts into a list of gates, preserving order
+            
+            Args:
+                gate_ids: A list of gate_ids to be converted to actual gates
+                gates_dictionary: A dictionary of gate id's and the coresponding gates
+
+            Returns:
+                A list of gates in the same order as the list of gate_id's
+            """
+            gates = []
+            for gate_id in gate_ids:
+                
+                gates.append(gates_dictionary[gate_id]) # Replace the gate_id with the 
+                                                        # actual gate
+            return gates
+
+
+    @staticmethod
+    def _reverse_gate_string_list(circuit_string_list):
+            """Reverse each row for dotting and applying in correct order later on 
+
+            Args:
+                circuit_string_list: A list of strings each of which represents a series of gates in
+                                     the quantum circuit to be generated
+            """
+            returnList = [] 
+            for x in circuit_string_list:
+                returnList.append(list(x[::-1])) # Reverses the string in place and convert to list 
+                                             # e.g. "ABC" -> ['A','B','C']
+            return returnList
 
     @staticmethod
     def _reform_data(oppDat):
