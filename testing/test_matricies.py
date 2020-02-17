@@ -1,10 +1,17 @@
-"""
+"""Provides basic tests for the matrices implementation
+
+
 
 .. todo:: Check vector conjugate & transpose
+
+Author(s): 
+ * Benjamin Carpenter(s1731178@ed.ac.uk)
 """
+
 import unittest
-from circuit_model import matrices 
+from circuit_model_library import matrices 
 import numpy as np
+
 class TestSquareMatrixImp(unittest.TestCase):
     """
 

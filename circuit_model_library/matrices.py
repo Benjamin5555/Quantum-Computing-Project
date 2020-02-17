@@ -11,15 +11,17 @@
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
     * SquareMatrix:
-        * Different init i.e. using a sparse array etc
+        * Different init i.e. using a sparse array?
     * Vector:
-        * Different init i.e. using a sparse array etc
+        * Different init i.e. using a sparse array?
+Author(s):
+    * Benjamin Carpenter(s1731178@ed.ac.uk)
 
 """
-from scipy.sparse import csc_matrix, csr_matrix
+from scipy.sparse import csc_matrix, csr_matrix, kron
 import numpy as np
 
-class SparseMatrix():
+class SparseMatrix(object):
     """A general representation of a sparse matrix with common functionality for matrices:
       Addition, subtraction, matrix multiplication and Equality checking 
 
@@ -32,10 +34,36 @@ class SparseMatrix():
         assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
 
+    def tensor_product(self,matrix):
+        """Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: Testing, better commenting and checking this is actually the correct operation
+        """
+        return kron(self.matrix, matrix.matrix)
+    
+    def dot(self,matrix):
+        """dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        """
+        return self.matrix.dot(matrix)
+
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
 
-    def __getitem__(self,index):
+    def __getitem__(self, index):
         return self.matrix.A[index]
 
     def __add__(self,matrix):
@@ -124,7 +152,13 @@ class SparseMatrix():
             Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
         """
         return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit
-
+    
+    def __pow__(self,exponent):
+        """
+        Returns:
+            Original matrix raised to the argument power
+        """
+        NotImplemented
     
 class SquareMatrix(SparseMatrix):
     """Sparse square matrix that provides basic functionallity
