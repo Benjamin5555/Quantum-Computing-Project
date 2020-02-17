@@ -21,7 +21,7 @@ Author(s):
 from scipy.sparse import csc_matrix, csr_matrix, kron
 import numpy as np
 
-class SparseMatrix():
+class SparseMatrix(object):
     """A general representation of a sparse matrix with common functionality for matrices:
       Addition, subtraction, matrix multiplication and Equality checking 
 

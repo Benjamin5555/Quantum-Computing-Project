@@ -19,15 +19,22 @@ class TestCircuitModel(unittest.TestCase):
         """
 
         """
-        H = circuit_model.Gate(2**(-1/2) * np.array([[1,  1],\
-                                                     [1, -1]]))
+        H = circuit_model.Gate("H",2**(-1/2) * np.array([[1,  1],\
+                                                         [1, -1]]))
+
+        N = circuit_model.Gate("N",[[0, 1],\
+                                    [1, 0]])
+
+        I = circuit_model.Gate("I",[[1, 0],\
+                                    [0, 1]])
 
 
-        test_circuit_string_list = ["HIIHn","INHIc"]
-        test_gates_dictionary = {"I":"|Identity|",\
-                            "H":"|Hadamard|",\
-                            "n":"|controlled not head|",\
-                            "c":"|controlled not control|",\
-                            "N":"|Not|"}
+
+        test_circuit_string_list = ["HIIH","INHI"]
+        test_gates_dictionary = {"I":I,\
+                                 "H":H,\
+                                 "n":"|controlled not head|",\
+                                 "c":"|controlled not control|",\
+                                 "N":N}
 
         circuit_model.QuantumCircuit(test_circuit_string_list, test_gates_dictionary)

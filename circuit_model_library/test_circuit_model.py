@@ -30,7 +30,7 @@ class TestCircuitModel(unittest.TestCase):
 
 
 
-        test_circuit_string_list = ["HIIH","INHI"]
+        test_circuit_string_list = ["HNIH","INHI"]
         test_gates_dictionary = {"I":I,\
                                  "H":H,\
                                  "n":"|controlled not head|",\
