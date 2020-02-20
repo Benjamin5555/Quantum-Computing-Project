@@ -13,6 +13,7 @@ from circuit_model_library import matrices
 import scipy.sparse
 import numpy as np
 
+
 class Gate(matrices.SquareMatrix):
     """A class to implement gates, will share a large amount of functionality with a square matrix
     but will require have a more specific criteria for what form a matrix can take as well as
@@ -24,7 +25,7 @@ class Gate(matrices.SquareMatrix):
     .. todo::
         *Add verification so actual constraints on what a gate can be are observed (i.e. unitary)
     """
-    def __init__(self, gate_id, matrix):
+    def __init__(self, matrix, gate_id=None):
         """Creates a gate object
         Args:
         Raises:
@@ -34,6 +35,7 @@ class Gate(matrices.SquareMatrix):
 
         #Call the parent class constructor after verifying valid parameters for a gate  
         self.gate_id = gate_id
+        print(type(matrix))
         super().__init__(matrix)
 
 class QuantumRegister(matrices.Vector):
@@ -43,18 +45,54 @@ class QuantumRegister(matrices.Vector):
         register: The tensor product of quBits in the sytem under consideration
     
     """
-    def __init__(self):
+    def __init__(self, register_initial_state, shape=None):
         """Initialise a quantum register with specific values
         Args:
-            register_initial_state: Values related to the initial state of the regitster
+            register_initial_state:Either 
+                A list of integers related to positions of 1s in the quantum register 
+                Or
+                A sparse matrix that represents a quantum register (e.g. as the result of a 
+                computation) 
+        
+        .. todo:: 
+            *register_initial_state might not be an accurate name for the parameter 
+
         """
-        NotImplemented 
+        if isinstance(register_initial_state, scipy.sparse.spmatrix):
+            #Case where an existing sparse matrix is passed we can simply genearate from this 
+            super().__init__(register_initial_state)
+            return
+        elif(isinstance(register_initial_state[0],int)):
+            #Case given a list of ints that denote positions of 1s in our registe
+            bit_pos_shape = np.shape(register_initial_state)
+
+            if(shape == None):
+                shape = bit_pos_shape
+            #Call the constructor of the vector class for a one'd sparse matrix at the specified bit
+            #positions
+            super().__init__(scipy.sparse.coo_matrix((np.ones(bit_pos_shape),\
+                                                     (register_initial_state,\
+                                                     np.zeros(bit_pos_shape))),\
+                                                     shape = shape))
+        else:
+            raise ValueError("Cannot create a quantum register with type "\
+                             +str(type(register_initial_state)))
+
+
+    def measure_register(self):
+        """Measures the register, returning the probability of different output bit values
+
+        Returns:
+
+        Raises:
+
+        """
+        for 
 
 
 
 
-
-class QuantumCircuit(object):
+class QuantumCircuit(Gate):
     """An object representing a quantum circuit, can be used to run circuits on ...
     
     Constructs circuit from a given set of gates and schematic using the fact that a series of gates
@@ -63,7 +101,8 @@ class QuantumCircuit(object):
     to the register is equivalent to the tensor product of these gates. By use of the Identity 
     matrix we can create a matrix representing the circuit
     """
-    def __init__(self, circuit_string_list, gates_dictionary):
+
+    def __init__(self, circuit_in, gates_dictionary = None):
         """Creates a quantum circuit which a register can be run on, effecively creating a 
         matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
 
@@ -76,15 +115,26 @@ class QuantumCircuit(object):
         Uses the fact that tensor product of a gate is 
         
         Args:
-            circuit_string_list: A list of strings representing each row of the quantum circuit 
-            where each character in the string relates to (or part of) a  quantum gate
+            circuit_in: Either
+                              A list of strings representing each row of the quantum circuit where 
+                              each character in the string relates to (or part of) a  quantum gate
+                        Or
+                              A matrix representing the circuit
             gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
-            with id's matching that of those used in the circuit string 
+            with id's matching that of those used in the circuit string or None
         
         Raises:
-            TypeError: If non list of strings argument given for the circit_string_list
+            ValueError: If non list of strings argument given for the circit_string_list
+            .. todo:: Might not raise this error
         """
-        reversed_strings = self._reverse_gate_string_list(circuit_string_list) 
+       
+        if not (all(isinstance(s, str) for s in circuit_in)):
+            #Where the input is not a string and hence is already a valid matrice representing a 
+            #quantum circuit
+            super().__init__(circuit_in)
+            return
+        
+        reversed_strings = self._reverse_gate_string_list(circuit_in) 
                 
                 
         #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
@@ -110,10 +160,28 @@ class QuantumCircuit(object):
         # Dot each of these component gates together 
                 
         #Technically is one massive Gate (or at least has same properties) consider use here?
-        self.circuit = self._scalar_product_gates(circuit_matrix_comp)         
+        super().__init__(self._scalar_product_gates(circuit_matrix_comp))        
     
-    #Bam, a quCircuit that can be applied to a quRegister
-    
+    def __mul__(self,multiplier):
+        """
+        Args:
+            multiplier: A scalar or quantum register to multiply the circuit by 
+
+        Returns:
+            The scalar or matrix multiple of the current matrix and multiplier
+        
+        Raises:
+
+        """
+        if(isinstance(multiplier,QuantumRegister)):
+            return QuantumRegister(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
+        elif(isinstance(multiplier,(int, float, complex))):
+            return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
+        else:
+            raise TypeError("Cannot multiply Quantum circuit by"+str(type(multiplier)))
+
+
+
     @staticmethod
     def _scalar_product_gates(gates):
         """Gets the scalar (dot) product of a list of gates

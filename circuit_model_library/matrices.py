@@ -33,6 +33,7 @@ class SparseMatrix(object):
     def __init__(self, matrix):
         assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
+        self.matrix.eliminate_zeros()
 
     def tensor_product(self,matrix):
         """Returns the kronker product of this  matrix with another, when applied to a vector 
@@ -112,8 +113,7 @@ class SparseMatrix(object):
 
         """
         if(isinstance(multiplier,SparseMatrix)):
-            return type(self)(self.matrix.multiply(multiplier.matrix)#SEE __add__ for type(self) bit
-            )
+            return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
         else:
             return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
 
@@ -177,8 +177,13 @@ class SquareMatrix(SparseMatrix):
         """
     
         assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
-        assert not isinstance(matrix[0][0],list)          #Ensure only 2D list 
+        
+        
+        #assert not isinstance(matrix[0][0],list)          #Ensure only 2D list, 
+        #test doesn't work well with sparse martircies, consider different test or total removal 
+
         self.matrix = csr_matrix(matrix)
+        self.matrix.eliminate_zeros()
 
 class Vector(SparseMatrix): 
     """Vector (Row or column) representation that uses scipy sparse class  
@@ -207,6 +212,7 @@ class Vector(SparseMatrix):
             raise ValueError("Cannot construct a vector with shape ",shape)
         
         self.matrix = csc_matrix(matrix)
+        self.matrix.eliminate_zeros()
         self.dimension = np.shape(matrix)
     
     def __getitem__(self,index): 
