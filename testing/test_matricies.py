@@ -106,13 +106,16 @@ class TestSquareMatrixImp(unittest.TestCase):
 
     def test_Vector_basic_operations(self):
         testCVectorA, testCVectorB, testRVector,rv, cv,cv2 = self.create_Vectors()
+        testSqMatrixA, testSqMatrixB, mc, mc2 = self.create_SquareMatrix()
 
         a = testCVectorA + testCVectorB
         b = matrices.Vector(cv+cv2)
-       
+        print(testCVectorA)
+        print(testCVectorB)
         assert (testCVectorA + testCVectorB) == matrices.Vector(cv+cv2)
         assert (testCVectorA - testCVectorB) == matrices.Vector(cv-cv2)
-        assert (testCVectorA * testCVectorB) == matrices.Vector(cv*cv2)
+        assert (testSqMatrixA  * testCVectorA) == matrices.SparseMatrix(mc*cv)
+
 
     if __name__ == 'main':
 

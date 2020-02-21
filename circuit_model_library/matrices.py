@@ -200,6 +200,9 @@ class Vector(SparseMatrix):
             matrix: A row (e.g. `[1,0,1,0]' or column `[[1],[0],[1],[0]]' formatted list-like object
         Raises:
             ValueError: On recieving invalid shaped list-like object
+
+
+        .. todo:: Override transpose and related functions to update 'type' attribute
         """
         shape = np.shape(matrix)
         
@@ -220,3 +223,15 @@ class Vector(SparseMatrix):
             return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
         else:
             return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
+
+    #def transpose(self):
+    #    """
+    #    Returns:
+    #        Transpose of the given vector \\(a_{ij}^T = a_{ji}\\)
+    #    """
+    #    if (self.type == "c"):
+    #        self.type = "r"
+    #    else:
+    #        self.type = "c"
+
+    #    return super().transpose()

@@ -87,9 +87,15 @@ class QuantumRegister(matrices.Vector):
         Raises:
 
         """
-        for 
+        #Because of how csc_matrix stores data, the values and poisitive bit posiotions are given 
+        #simply by the indicies and data attributes, where the indices value represents a Qbit 
+        #e.g. if the indice is 5 its equivalent to = |101>  and the probability is given by
+        #the value in the data attribute hence
+        if(self.dimension[0]>self.dimension[1]): #Only works in case of column vector 
+            return [self.matrix.indices,self.matrix.data]
+            
 
-
+            
 
 
 class QuantumCircuit(Gate):
