@@ -10,6 +10,7 @@
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
+        * Equal sorting of the indicies produces incorrect equalities? 
     * SquareMatrix:
         * Different init i.e. using a sparse array?
     * Vector:
@@ -31,8 +32,9 @@ class SparseMatrix(object):
     """
 
     def __init__(self, matrix):
-        assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
+        #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
+        self.matrix.eliminate_zeros()
 
     def tensor_product(self,matrix):
         """Returns the kronker product of this  matrix with another, when applied to a vector 
@@ -110,10 +112,16 @@ class SparseMatrix(object):
         
         Raises:
 
+
         """
-        if(isinstance(multiplier,SparseMatrix)):
-            return type(self)(self.matrix.multiply(multiplier.matrix)#SEE __add__ for type(self) bit
-            )
+
+        if(isinstance(multiplier,SparseMatrix)):#Check if scalar or matrix multiplication valid
+            if(isinstance(multiplier,Vector)): #If is multiplied by vector-like object will be 
+                                               #(abstractly) a vector itself hence must return new 
+                                               #vector (else same type return)
+                return type(multiplier)(self.matrix*multiplier.matrix) 
+            else:
+                return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
         else:
             return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
 
@@ -121,11 +129,23 @@ class SparseMatrix(object):
     def __eq__(self,matrix):
         if(self.matrix.nnz == matrix.matrix.nnz and \
            self.matrix.get_shape() == matrix.matrix.get_shape()): #Check number of items/shape is
-                                                                  #the same as a quick initial check
-            return all(self.matrix.data==matrix.matrix.data)\
-                       and all(self.matrix.indices == matrix.matrix.indices)\
-                       and all(self.matrix.indptr == matrix.matrix.indptr)
-                       #Compare wheter non zero elements have same data
+                                                                #the same as a quick initial check
+            if(type(self.matrix) != type(matrix.matrix)):
+                try:
+                    matrix = type(self)(matrix.matrix) #Allow for valid equivalence checking by 
+                                                       #casting the matrix to check equality with as
+                                                       #this type 
+                except:
+                    return False # Can assume that if the data cannot be cast then not equal
+            
+            # Can compare sorted components of the sparse array to check equal (also round data to 
+            # account for calculation errors)
+            return all(np.around(np.sort(self.matrix.data),4)==\
+                    np.around(np.sort(matrix.matrix.data),4))\
+                       and all(np.sort(self.matrix.indices) == np.sort(matrix.matrix.indices))\
+                       and all(np.sort(self.matrix.indptr)  == np.sort(matrix.matrix.indptr))
+                       #Compare wheter non zero elements have same data Not 100% sure sorting 
+                       #required, Probably also a more efficient method
         else:
             return False
 
@@ -177,8 +197,13 @@ class SquareMatrix(SparseMatrix):
         """
     
         assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
-        assert not isinstance(matrix[0][0],list)          #Ensure only 2D list 
-        self.matrix = csr_matrix(matrix)
+        
+        
+        #assert not isinstance(matrix[0][0],list)          #Ensure only 2D list, 
+        #test doesn't work well with sparse martircies, consider different test or total removal 
+        super().__init__(matrix)
+        #self.matrix = csr_matrix(matrix)
+        #self.matrix.eliminate_zeros()
 
 class Vector(SparseMatrix): 
     """Vector (Row or column) representation that uses scipy sparse class  
@@ -195,6 +220,9 @@ class Vector(SparseMatrix):
             matrix: A row (e.g. `[1,0,1,0]' or column `[[1],[0],[1],[0]]' formatted list-like object
         Raises:
             ValueError: On recieving invalid shaped list-like object
+
+
+        .. todo:: Override transpose and related functions to update 'type' attribute
         """
         shape = np.shape(matrix)
         
@@ -207,6 +235,7 @@ class Vector(SparseMatrix):
             raise ValueError("Cannot construct a vector with shape ",shape)
         
         self.matrix = csc_matrix(matrix)
+        self.matrix.eliminate_zeros()
         self.dimension = np.shape(matrix)
     
     def __getitem__(self,index): 
@@ -214,3 +243,15 @@ class Vector(SparseMatrix):
             return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
         else:
             return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
+
+    #def transpose(self):
+    #    """
+    #    Returns:
+    #        Transpose of the given vector \\(a_{ij}^T = a_{ji}\\)
+    #    """
+    #    if (self.type == "c"):
+    #        self.type = "r"
+    #    else:
+    #        self.type = "c"
+
+    #    return super().transpose()

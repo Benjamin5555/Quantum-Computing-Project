@@ -2,8 +2,8 @@
 a functionality that will 'run' a circuit
 .. todo::
     * Implementation of gate given a decision on exactly how it will be called/used
-    * Current quantum circuit implementation will only work for 2x2 matricies, controlled not gates 
-      will not work 
+    * Current quantum circuit implementation will only work for 2x2 matricies, hence as an example 
+    controlled not gates will not work 
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -12,6 +12,7 @@ Author(s):
 from circuit_model_library import matrices
 import scipy.sparse
 import numpy as np
+
 
 class Gate(matrices.SquareMatrix):
     """A class to implement gates, will share a large amount of functionality with a square matrix
@@ -24,7 +25,7 @@ class Gate(matrices.SquareMatrix):
     .. todo::
         *Add verification so actual constraints on what a gate can be are observed (i.e. unitary)
     """
-    def __init__(self, gate_id, matrix):
+    def __init__(self, matrix, gate_id=None):
         """Creates a gate object
         Args:
         Raises:
@@ -43,18 +44,65 @@ class QuantumRegister(matrices.Vector):
         register: The tensor product of quBits in the sytem under consideration
     
     """
-    def __init__(self):
+    def __init__(self, register_initial_state, shape=None):
         """Initialise a quantum register with specific values
         Args:
-            register_initial_state: Values related to the initial state of the regitster
+            register_initial_state:Either 
+                A list of integers related to positions of 1s in the quantum register 
+                Or
+                A sparse matrix that represents a quantum register (e.g. as the result of a 
+                computation) 
+        
+        .. todo:: 
+            *register_initial_state might not be an accurate name for the parameter 
+
         """
-        NotImplemented 
+        if isinstance(register_initial_state, scipy.sparse.spmatrix):
+            #Case where an existing sparse matrix is passed we can simply genearate from this 
+            super().__init__(register_initial_state)
+            return
+        elif(isinstance(register_initial_state[0],int)):
+            #Case given a list of ints that denote positions of 1s in our registe
+            bit_pos_shape = np.shape(register_initial_state)
+
+            if(shape == None):
+                shape = bit_pos_shape
+            #Call the constructor of the vector class for a one'd sparse matrix at the specified bit
+            #positions
+            super().__init__(scipy.sparse.coo_matrix((np.ones(bit_pos_shape),\
+                                                     (register_initial_state,\
+                                                     np.zeros(bit_pos_shape))),\
+                                                     shape = shape))
+        else:
+            raise ValueError("Cannot create a quantum register with type "\
+                             +str(type(register_initial_state)))
 
 
+    def measure(self):
+        """Measures the register, returning the possible state values and probability of different
+        output bit values
+
+        'Possible state values' relates to the value represented by the qubits (or now just bits as 
+        any superposition is collapsed on measurments) e.g. |11> has a 'state value' of 3
+
+        Returns:
+            A 2D list of possible values and their probabilities 
+            i.e. [[Possible values],[Related Probability]]
+        Raises:
+
+        """
+        #Because of how csc_matrix stores data, the values and poisitive bit posiotions are given 
+        #simply by the indicies and data attributes, where the indices value represents a Qbit 
+        #e.g. if the indice is 5 its equivalent to = |101>  and the probability is given by
+        #the value in the data attribute squared hence
+        if(self.dimension[0]>self.dimension[1]): #Only works in case of column vector 
+            return [self.matrix.indices,self.matrix.data**2]
+            
+
+            
 
 
-
-class QuantumCircuit(object):
+class QuantumCircuit(Gate):
     """An object representing a quantum circuit, can be used to run circuits on ...
     
     Constructs circuit from a given set of gates and schematic using the fact that a series of gates
@@ -63,7 +111,8 @@ class QuantumCircuit(object):
     to the register is equivalent to the tensor product of these gates. By use of the Identity 
     matrix we can create a matrix representing the circuit
     """
-    def __init__(self, circuit_string_list, gates_dictionary):
+
+    def __init__(self, circuit_in, gates_dictionary = None):
         """Creates a quantum circuit which a register can be run on, effecively creating a 
         matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
 
@@ -76,15 +125,26 @@ class QuantumCircuit(object):
         Uses the fact that tensor product of a gate is 
         
         Args:
-            circuit_string_list: A list of strings representing each row of the quantum circuit 
-            where each character in the string relates to (or part of) a  quantum gate
+            circuit_in: Either
+                              A list of strings representing each row of the quantum circuit where 
+                              each character in the string relates to (or part of) a  quantum gate
+                        Or
+                              A matrix representing the circuit
             gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
-            with id's matching that of those used in the circuit string 
+            with id's matching that of those used in the circuit string or None
         
         Raises:
-            TypeError: If non list of strings argument given for the circit_string_list
+            ValueError: If non list of strings argument given for the circit_string_list
+            .. todo:: Might not raise this error
         """
-        reversed_strings = self._reverse_gate_string_list(circuit_string_list) 
+       
+        if not (all(isinstance(s, str) for s in circuit_in)):
+            #Where the input is not a string and hence is already a valid matrice representing a 
+            #quantum circuit
+            super().__init__(circuit_in)
+            return
+        
+        reversed_strings = self._reverse_gate_string_list(circuit_in) 
                 
                 
         #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
@@ -106,14 +166,23 @@ class QuantumCircuit(object):
             circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
             
 
-        # consider using fold left / right  !!!
+        
         # Dot each of these component gates together 
-                
         #Technically is one massive Gate (or at least has same properties) consider use here?
-        self.circuit = self._scalar_product_gates(circuit_matrix_comp)         
+        super().__init__(self._scalar_product_gates(circuit_matrix_comp))        
     
-    #Bam, a quCircuit that can be applied to a quRegister
-    
+   
+    def apply(self,quantum_register):
+        """Applies the quantum circuit to a register and returns the superposition quantum register
+
+        Args:
+            quantum_register: The register representing the start state of the circuit
+
+        Return:
+            Quantum register after passing through the circuit, in a superposition of states
+        """
+        return self*quantum_register
+
     @staticmethod
     def _scalar_product_gates(gates):
         """Gets the scalar (dot) product of a list of gates
@@ -203,47 +272,6 @@ class QuantumCircuit(object):
             rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
                                               #position using mod
         return rDat  
-
-
-class Qubit(matrices.Vector):
-    """A vector like object that represents a quantum bit (qubit)
-    Attributes:
-        state: A 2 dimensional vector representing the state of the Qubit
-    .. todo:: Weirdly this may not be a required class consider whether it is needed
-    """
-    def __init__(self, bit_positions):
-        """Creates a qubit object.
-        A quantum bit (qubit) is a system that can be observed in two unique states such as electron
-        spin (can be up or down).
-        A qubit is a vector in a Hilbert space (n-dimensional vector space) where \\(n\\) quibits
-        will represent \\(2^n\\) dimensional Hilbert space.
-        Each state is a basis of the Hilbert space, for example in a 2 qubit system we get the basis
-        of a zero and one ket.
-        A qubit is unique in that it can be in a superposition of the different states allowing for
-        an increased number of values being represented
-        Differs from a vector in that the contructor argument is simply positions of ones
-        Args:
-            bit_positions: A list of positions of ones in the quantum register
-        """
-        bit_pos_shape = np.shape(bit_positions)
-
-
-        #Call the constructor of the vector class for a one'd sparse matrix at the specified bit
-        #positions
-        super(scipy.sparse.coo_matrix((np.ones(bit_pos_shape,\
-                                      (bit_positions, np.zeros(bit_pos_shape))))))
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
