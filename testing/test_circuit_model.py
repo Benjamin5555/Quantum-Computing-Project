@@ -44,12 +44,6 @@ class TestCircuitModel(unittest.TestCase):
 
     def test_run_circuit(self):
         register, not_not_circuit = self.__setup_test()
-        print("-----------------------")
-        print(type(not_not_circuit*register))
-        print(not_not_circuit)
-        print(register)
-        print("-------____")
-        print(not_not_circuit*register)
         assert not_not_circuit*register == register
         
 
@@ -58,8 +52,6 @@ class TestCircuitModel(unittest.TestCase):
 
         """
         test_register = circuit_model.QuantumRegister([0,1,4,9],shape = (12,1))
-        print("------------------")
-        print(test_register)
 
 
 
@@ -67,20 +59,71 @@ class TestCircuitModel(unittest.TestCase):
         """
 
         """
+        
+        
         circuit1 = circuit_model.QuantumCircuit(self.test_circuit_string_list, self.test_gates_dictionary)
-        print(circuit1)
-        print("----------------------")
+        #print(circuit1)
+        #print("----------------------")
         test_circuit_not_string = ["XXI","XIX"]
+        
+        
+        
         circuit2 = circuit_model.QuantumCircuit(test_circuit_not_string, self.test_gates_dictionary)
         #Should return identity matrix
-        print(circuit2) 
-        """
-        assert circuit2.circuit.A == Gate(np.array([[1,0,0,0],\
-                                                    [0,1,0,0],\
-                                                    [0,0,1,0],\
-                                                    [0,0,0,1]]))
-                                                    """
-        print("----------------------")
+
+        assert (circuit2.matrix.A == (np.array([[1,0,0,0],\
+                                                [0,1,0,0],\
+                                                [0,0,1,0],\
+                                                [0,0,0,1]]))).all()
         circuit_string3 = ["HI","IX"]
         circuit3 =circuit_model.QuantumCircuit(circuit_string3  , self.test_gates_dictionary)
-        print(circuit3)
+        circuit3Expected = circuit_model.QuantumCircuit([[0, 1/np.sqrt(2), 0, 1/np.sqrt(2)   ],\
+                                                       [1/np.sqrt(2), 0, 1/np.sqrt(2), 0   ],\
+                                                       [0, 1/np.sqrt(2), 0, -(1/np.sqrt(2))],\
+                                                       [1/np.sqrt(2), 0, -(1/np.sqrt(2)), 0]])
+
+        assert circuit3== circuit3Expected
+       
+
+    def test_Hadamard_run(self):
+        """
+            Tests that the simulated  'circuit' process works for most basic gate i.e. Hadamard
+        """
+        
+        """
+            Apply to Hadamard gate to single qubit
+        """
+        circuit_single_Hadamard = circuit_model.QuantumCircuit(["HI","II"], self.test_gates_dictionary)
+
+        
+        out_register = circuit_single_Hadamard.apply(test_register_00)
+
+
+        p_calc = np.around(out_register.measure()[1],4)
+        p_exp = [0.5,0.5,0,0] 
+        # Expect equal prob of first bit being one as we applied Hadamard to the first bit only
+
+        for i in range(len(p_calc)):
+            assert p_calc[i] == p_exp[i]
+
+        #I.e. apply Hadamard to single qubit of |00> we expect equal probability of |0> and |1> and 
+        # other bit constant |0> state 
+
+
+
+
+        """
+            Apply a Hadamard to both qubits 
+        """
+        circuit_string = ["HI","IH"]
+
+        test_register_00 = circuit_model.QuantumRegister([0],shape = (4,1)) #Test with |00> State
+        circuit_Hadamard = circuit_model.QuantumCircuit(circuit_string, self.test_gates_dictionary)
+        out_register =circuit_Hadamard.apply(test_register_00)
+        
+
+        assert(all(round(p,4) == 0.25 for p in out_register.measure()[1]))
+        #I.e. apply hadamard to |00> we expect equal probability of every state
+       
+                
+

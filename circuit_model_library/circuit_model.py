@@ -2,8 +2,8 @@
 a functionality that will 'run' a circuit
 .. todo::
     * Implementation of gate given a decision on exactly how it will be called/used
-    * Current quantum circuit implementation will only work for 2x2 matricies, controlled not gates 
-      will not work 
+    * Current quantum circuit implementation will only work for 2x2 matricies, hence as an example 
+    controlled not gates will not work 
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -35,7 +35,6 @@ class Gate(matrices.SquareMatrix):
 
         #Call the parent class constructor after verifying valid parameters for a gate  
         self.gate_id = gate_id
-        print(type(matrix))
         super().__init__(matrix)
 
 class QuantumRegister(matrices.Vector):
@@ -79,20 +78,25 @@ class QuantumRegister(matrices.Vector):
                              +str(type(register_initial_state)))
 
 
-    def measure_register(self):
-        """Measures the register, returning the probability of different output bit values
+    def measure(self):
+        """Measures the register, returning the possible state values and probability of different
+        output bit values
+
+        'Possible state values' relates to the value represented by the qubits (or now just bits as 
+        any superposition is collapsed on measurments) e.g. |11> has a 'state value' of 3
 
         Returns:
-
+            A 2D list of possible values and their probabilities 
+            i.e. [[Possible values],[Related Probability]]
         Raises:
 
         """
         #Because of how csc_matrix stores data, the values and poisitive bit posiotions are given 
         #simply by the indicies and data attributes, where the indices value represents a Qbit 
         #e.g. if the indice is 5 its equivalent to = |101>  and the probability is given by
-        #the value in the data attribute hence
+        #the value in the data attribute squared hence
         if(self.dimension[0]>self.dimension[1]): #Only works in case of column vector 
-            return [self.matrix.indices,self.matrix.data]
+            return [self.matrix.indices,self.matrix.data**2]
             
 
             
@@ -162,31 +166,22 @@ class QuantumCircuit(Gate):
             circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
             
 
-        # consider using fold left / right  !!!
+        
         # Dot each of these component gates together 
-                
         #Technically is one massive Gate (or at least has same properties) consider use here?
         super().__init__(self._scalar_product_gates(circuit_matrix_comp))        
     
-    def __mul__(self,multiplier):
-        """
+   
+    def apply(self,quantum_register):
+        """Applies the quantum circuit to a register and returns the superposition quantum register
+
         Args:
-            multiplier: A scalar or quantum register to multiply the circuit by 
+            quantum_register: The register representing the start state of the circuit
 
-        Returns:
-            The scalar or matrix multiple of the current matrix and multiplier
-        
-        Raises:
-
+        Return:
+            Quantum register after passing through the circuit, in a superposition of states
         """
-        if(isinstance(multiplier,QuantumRegister)):
-            return QuantumRegister(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
-        elif(isinstance(multiplier,(int, float, complex))):
-            return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
-        else:
-            raise TypeError("Cannot multiply Quantum circuit by"+str(type(multiplier)))
-
-
+        return self*quantum_register
 
     @staticmethod
     def _scalar_product_gates(gates):
@@ -277,47 +272,6 @@ class QuantumCircuit(Gate):
             rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
                                               #position using mod
         return rDat  
-
-
-class Qubit(matrices.Vector):
-    """A vector like object that represents a quantum bit (qubit)
-    Attributes:
-        state: A 2 dimensional vector representing the state of the Qubit
-    .. todo:: Weirdly this may not be a required class consider whether it is needed
-    """
-    def __init__(self, bit_positions):
-        """Creates a qubit object.
-        A quantum bit (qubit) is a system that can be observed in two unique states such as electron
-        spin (can be up or down).
-        A qubit is a vector in a Hilbert space (n-dimensional vector space) where \\(n\\) quibits
-        will represent \\(2^n\\) dimensional Hilbert space.
-        Each state is a basis of the Hilbert space, for example in a 2 qubit system we get the basis
-        of a zero and one ket.
-        A qubit is unique in that it can be in a superposition of the different states allowing for
-        an increased number of values being represented
-        Differs from a vector in that the contructor argument is simply positions of ones
-        Args:
-            bit_positions: A list of positions of ones in the quantum register
-        """
-        bit_pos_shape = np.shape(bit_positions)
-
-
-        #Call the constructor of the vector class for a one'd sparse matrix at the specified bit
-        #positions
-        super(scipy.sparse.coo_matrix((np.ones(bit_pos_shape,\
-                                      (bit_positions, np.zeros(bit_pos_shape))))))
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

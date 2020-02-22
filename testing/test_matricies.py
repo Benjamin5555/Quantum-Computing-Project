@@ -48,7 +48,11 @@ class TestSquareMatrixImp(unittest.TestCase):
         b = matrices.SquareMatrix(mc+mc2)
         assert (testSqMatrixA + testSqMatrixB) == matrices.SquareMatrix(mc+mc2)
         assert (testSqMatrixA - testSqMatrixB) == matrices.SquareMatrix(mc-mc2)
-        assert (testSqMatrixA * testSqMatrixB) == matrices.SquareMatrix(mc*mc2)
+       
+        tp = (testSqMatrixA * testSqMatrixB)
+        tx = matrices.SquareMatrix(np.matmul(mc,mc2))
+        
+        assert (testSqMatrixA * testSqMatrixB) == matrices.SquareMatrix(np.matmul(mc,mc2))
         assert isinstance((testSqMatrixA + testSqMatrixB),matrices.SquareMatrix) 
 
     def test_SquareMatrix_conjugate_transpose(self):
@@ -110,11 +114,10 @@ class TestSquareMatrixImp(unittest.TestCase):
 
         a = testCVectorA + testCVectorB
         b = matrices.Vector(cv+cv2)
-        print(testCVectorA)
-        print(testCVectorB)
         assert (testCVectorA + testCVectorB) == matrices.Vector(cv+cv2)
         assert (testCVectorA - testCVectorB) == matrices.Vector(cv-cv2)
-        assert (testSqMatrixA  * testCVectorA) == matrices.SparseMatrix(mc*cv)
+
+        assert (testSqMatrixA  * testCVectorA) == matrices.SparseMatrix(np.matmul(mc,cv))
 
 
     if __name__ == 'main':
