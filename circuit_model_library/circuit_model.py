@@ -142,9 +142,9 @@ class QuantumCircuit(Gate):
             #quantum circuit
             super().__init__(circuit_in)
             return
-        
+       
+
         reversed_strings = self._reverse_gate_string_list(circuit_in) 
-                
                 
         #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
         # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]

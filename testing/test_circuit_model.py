@@ -9,6 +9,7 @@ Author(s):
 import unittest
 from circuit_model_library import circuit_model 
 import numpy as np
+from scipy.sparse import csr_matrix
 import inspect
 
 class TestCircuitModel(unittest.TestCase):
@@ -36,10 +37,10 @@ class TestCircuitModel(unittest.TestCase):
     
     
     def __setup_test(self):
-        test_register = circuit_model.QuantumRegister([1],shape = (4,1))
+        test_register_01 = circuit_model.QuantumRegister([1],shape = (4,1))
         test_circuit_not_not_string = ["XXI","XIX"]
         circuit2 = circuit_model.QuantumCircuit(test_circuit_not_not_string, self.test_gates_dictionary)
-        return test_register,circuit2
+        return test_register_01,circuit2
 
 
     def test_run_circuit(self):
@@ -93,19 +94,22 @@ class TestCircuitModel(unittest.TestCase):
         """
             Apply to Hadamard gate to single qubit
         """
-        circuit_single_Hadamard = circuit_model.QuantumCircuit(["HI","II"], self.test_gates_dictionary)
+        test_register_00 = circuit_model.QuantumRegister([0],shape=(4,1))
+        circuit_single_Hadamard = circuit_model.QuantumCircuit(["IH","II"], self.test_gates_dictionary)
 
         
         out_register = circuit_single_Hadamard.apply(test_register_00)
 
 
         p_calc = np.around(out_register.measure()[1],4)
+        print(out_register.measure()[0])
+        print(out_register.measure()[1])
         p_exp = [0.5,0.5,0,0] 
         # Expect equal prob of first bit being one as we applied Hadamard to the first bit only
+        assert (p_calc == [0.5,0.5]).all()
+        assert (out_register.measure()[0] == [0,1]).all()
 
-        for i in range(len(p_calc)):
-            assert p_calc[i] == p_exp[i]
-
+         
         #I.e. apply Hadamard to single qubit of |00> we expect equal probability of |0> and |1> and 
         # other bit constant |0> state 
 
