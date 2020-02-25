@@ -38,10 +38,9 @@ class Gate(matrices.SquareMatrix):
         super().__init__(matrix)
 
 class QuantumRegister(matrices.Vector):
-    """A system of multiple qubits, abstractly the tensor product of multiple qubits .
-    Practically equivalent to the volatile memory of a CPU in a classical computer
+    """A system of multiple qubits, abstractly the addition of multiple single qubits .
     Attributes:
-        register: The tensor product of quBits in the sytem under consideration
+        register: vector representing the qubit state 
     
     """
     def __init__(self, register_initial_state, shape=None):
