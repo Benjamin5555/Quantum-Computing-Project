@@ -6,7 +6,7 @@
       "name": "Basic usage example.ipynb",
       "provenance": [],
       "collapsed_sections": [],
-      "authorship_tag": "ABX9TyMQVIwV6uqQJTz5wBiRnu5C",
+      "authorship_tag": "ABX9TyMQ6YKNulueZncD+d3BTiPR",
       "include_colab_link": true
     },
     "kernelspec": {
@@ -74,6 +74,7 @@
       },
       "source": [
         "from circuit_model_library import circuit_model, matrices\n",
+        "from scipy.sparse import csr_matrix\n",
         "import numpy as np"
       ],
       "execution_count": 0,
@@ -125,7 +126,7 @@
         "colab_type": "text"
       },
       "source": [
-        "## Define a string to superimpose a single qubit in a two qubit register "
+        "## Define a string to represent a circuit (such as https://drive.google.com/file/d/1GnfdjAHMee3WCNxplf6NKsZweLXL-wBg/view?usp=sharing) to superimpose both qubit in a two qubit register "
       ]
     },
     {
@@ -136,7 +137,7 @@
         "colab": {}
       },
       "source": [
-        "circuit_string_list = [\"IH\",\"II\"]\n",
+        "circuit_string_list = [\"IH\",\"HI\"]\n",
         "\n",
         "#Currently system only works with 'square' circuits "
       ],
@@ -150,7 +151,7 @@
         "colab_type": "text"
       },
       "source": [
-        "### Define a register to apply the circuit to |01>"
+        "### Define a register to apply the circuit to |00>"
       ]
     },
     {
@@ -158,27 +159,23 @@
       "metadata": {
         "id": "X52doUIF2odD",
         "colab_type": "code",
-        "outputId": "438b53db-722e-4c5d-a004-74357516124d",
+        "outputId": "04082fca-b43c-4a03-dece-613500d4a7ff",
         "colab": {
           "base_uri": "https://localhost:8080/",
           "height": 85
         }
       },
       "source": [
-        "register_01 = circuit_model.QuantumRegister([1],shape = (4,1)) \n",
-        "print(register)\n",
-        "\n",
-        "#Discovered an issue in that sending a zero zero i.e. empty list of bit positions\n",
-        "#causes an error e.g. \n",
-        "#register = circuit_model.QuantumRegister([],shape = (2,1)) "
+        "register_00 = circuit_model.QuantumRegister([0],shape=(4,1)) \n",
+        "print(register_00)"
       ],
-      "execution_count": 0,
+      "execution_count": 16,
       "outputs": [
         {
           "output_type": "stream",
           "text": [
-            "[[0.]\n",
-            " [1.]\n",
+            "[[1.]\n",
+            " [0.]\n",
             " [0.]\n",
             " [0.]]\n"
           ],
@@ -204,9 +201,9 @@
         "colab": {}
       },
       "source": [
-        "circuit_single_Hadamard = circuit_model.QuantumCircuit(\\\n",
-        "                                                        circuit_string_list,\\\n",
-        "                                                        gates_dictionary)\n"
+        "circuit_Hadamard = circuit_model.QuantumCircuit(\\\n",
+        "                                                circuit_string_list,\\\n",
+        "                                                gates_dictionary)"
       ],
       "execution_count": 0,
       "outputs": []
@@ -229,7 +226,7 @@
         "colab": {}
       },
       "source": [
-        "out_register = circuit_single_Hadamard.apply(register_01)\n"
+        "out_register = circuit_Hadamard.apply(register_00)"
       ],
       "execution_count": 0,
       "outputs": []
@@ -241,7 +238,8 @@
         "colab_type": "text"
       },
       "source": [
-        "### We expect applying the Hadamard gate to the 'top' qubit in state $|1>$ to produce a superposition of states i.e. $A|0>+B|1>$ with equal probability "
+        "### We expect applying the Hadamard gate to the both qubits in state $|0>$ to produce a superposition of states i.e. $A|00>+B|01>+C|10>+D|11>$ with equal probability\n",
+        "\n"
       ]
     },
     {
@@ -249,7 +247,7 @@
       "metadata": {
         "id": "rbWXxI6m50J-",
         "colab_type": "code",
-        "outputId": "63bfa273-46b4-4b5c-8600-8cddacf853c5",
+        "outputId": "3861b511-baea-4ff9-82ca-632dd06e4402",
         "colab": {
           "base_uri": "https://localhost:8080/",
           "height": 85
@@ -258,15 +256,15 @@
       "source": [
         "print(out_register)"
       ],
-      "execution_count": 0,
+      "execution_count": 19,
       "outputs": [
         {
           "output_type": "stream",
           "text": [
-            "[[0.        ]\n",
-            " [0.70710678]\n",
-            " [0.        ]\n",
-            " [0.70710678]]\n"
+            "[[0.5]\n",
+            " [0.5]\n",
+            " [0.5]\n",
+            " [0.5]]\n"
           ],
           "name": "stdout"
         }
@@ -287,22 +285,21 @@
       "metadata": {
         "id": "_Y7EWyQaHTr9",
         "colab_type": "code",
-        "outputId": "fe45f8a0-49c9-4c6c-bd39-4e52fa631e78",
+        "outputId": "3d6f6146-878a-4572-c95c-0e4e125a3dcd",
         "colab": {
           "base_uri": "https://localhost:8080/",
-          "height": 51
+          "height": 34
         }
       },
       "source": [
-        "print(out_register.measure()[0])\n"
+        "print(out_register.measure()[0])"
       ],
-      "execution_count": 0,
+      "execution_count": 20,
       "outputs": [
         {
           "output_type": "stream",
           "text": [
-            "[1 3]\n",
-            "[0.5 0.5]\n"
+            "[0 1 2 3]\n"
           ],
           "name": "stdout"
         }
@@ -315,7 +312,7 @@
         "colab_type": "text"
       },
       "source": [
-        "### And their probabilites"
+        "### ...And their probabilites"
       ]
     },
     {
@@ -323,34 +320,161 @@
       "metadata": {
         "id": "ZI-tAY2YHWPH",
         "colab_type": "code",
-        "outputId": "2fe28211-5f05-483a-ceb0-bb8abbac2515",
+        "outputId": "a05a7a9c-93a8-4371-8261-2e9749a6eb0c",
         "colab": {
           "base_uri": "https://localhost:8080/",
-          "height": 164
+          "height": 34
         }
       },
       "source": [
         "print(out_register.measure()[1])"
       ],
-      "execution_count": 8,
+      "execution_count": 21,
       "outputs": [
         {
-          "output_type": "error",
-          "ename": "NameError",
-          "evalue": "ignored",
-          "traceback": [
-            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
-            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
-            "\u001b[0;32m<ipython-input-8-b94091378b2d>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mout_register\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmeasure\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
-            "\u001b[0;31mNameError\u001b[0m: name 'out_register' is not defined"
-          ]
+          "output_type": "stream",
+          "text": [
+            "[0.25 0.25 0.25 0.25]\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "JsdgJcOqfVGc",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Current Issues"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "HVoI9nFQfaqA",
+        "colab_type": "text"
+      },
+      "source": [
+        "### Only works for certain square gates such as Hadamard, haven't thought out how to apply to something like a controlled not gate, also requires the input circuit to be square e.g. [\"HI\",\"II\"] not simpy [\"H\"]\n",
+        "![Controlled Not Gate](https://wikimedia.org/api/rest_v1/media/math/render/svg/7902c186299d0d276596546bb94df25cf3f35c63)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "homxJxlLf36t",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Input string to represent a circuit might not be most logical way of showing"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DRjAflfDfmw0",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "register_00 = circuit_model.QuantumRegister([0],shape=(4,1)) \n",
+        "circuit_single_Hadamard = circuit_model.QuantumCircuit([\"IH\",\"II\"],gates_dictionary)\n",
+        "out_register_single_H = circuit_single_Hadamard.apply(register_00)\n"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "odRgKwbBjbDQ",
+        "colab_type": "text"
+      },
+      "source": [
+        "It is potentially unclear which qubit we have applied the Hadamard gate to in this case apparently the second qubit as we end up with a superposition of the 2 state i.e. [[0],\n",
+        "                                   [0],\n",
+        "                                   [1],\n",
+        "                                   [0]]\n",
+        "and the 0 state i.e. [[1],[0],[0],[0]]\n",
+        "\n",
+        "in equal probability. This may not be the logical outcome we would expect"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "che1JF9rjccu",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "bc7f1730-9118-4b77-b621-5117d8343564"
+      },
+      "source": [
+        "print(out_register_single_H.measure()[0])\n",
+        "\n",
+        "print(out_register_single_H.measure()[1])"
+      ],
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "[0 2]\n",
+            "[0.5 0.5]\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KTOmbh3xlVn8",
+        "colab_type": "text"
+      },
+      "source": [
+        ""
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "pEkGpluFkMFF",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "7bba4a4f-dc58-49bd-a6cf-5047081ab25d"
+      },
+      "source": [
+        "register_00 = circuit_model.QuantumRegister([0],shape=(4,1)) \n",
+        "circuit_single_Hadamard = circuit_model.QuantumCircuit([\"II\",\"HI\"],gates_dictionary)\n",
+        "out_register_single_H = circuit_single_Hadamard.apply(register_00)\n",
+        "print(out_register_single_H.measure()[0])\n",
+        "\n",
+        "print(out_register_single_H.measure()[1])"
+      ],
+      "execution_count": 33,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "[0 1]\n",
+            "[0.5 0.5]\n"
+          ],
+          "name": "stdout"
         }
       ]
     },
     {
       "cell_type": "code",
       "metadata": {
-        "id": "thtx39qLHrWb",
+        "id": "lAFYfOqblAJw",
         "colab_type": "code",
         "colab": {}
       },
