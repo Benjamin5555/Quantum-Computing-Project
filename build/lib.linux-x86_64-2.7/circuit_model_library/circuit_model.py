@@ -214,15 +214,8 @@ class QuantumCircuit(Gate):
         product = gates[0].tensor_product(gates[1]) 
 
         #Apply tensor product to rest of the 'column' (though only if there are more elements)
-        if len(gates) > 2:
-            #print("---------------------------")
-            #print(gates[2:])
-            #print("---------------------------")
-            for gate in gates[2:]:#TODO IMMEDIATE FIX THIS BIT  
-                #print(type(product))
-                #print("------------------------")
-                #print(type(gate))
-                #print("---------")
+        if len(gates) > 2: 
+            for gate in gates[2:]: 
                 product = product.tensor_product(gate) 
         return product
 

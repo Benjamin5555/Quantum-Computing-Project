@@ -45,19 +45,10 @@ class SparseMatrix(object):
         Returns:
             A sparse matrix representation of self \\(\otimes\\) matrixB
     
-        .. todo:: 
-            * Testing, better commenting and checking this is actually the correct operation
-            * Implement own tensor product function or explain how kron function works for report
+        .. todo:: Testing, better commenting and checking this is actually the correct operation
         """
-        test = type(self)(kron(self.matrix, matrix.matrix))
-        print("###############################")
-        print(type(self.matrix),type(matrix.matrix))
-        print(type(test))
-        print("###############################")
-        return type(self)(kron(self.matrix, matrix.matrix))
-
-        #return type(self)(kron(self.matrix, matrix.matrix))
-        
+        return kron(self.matrix, matrix.matrix)
+    
     def dot(self,matrix):
         """dot/scalar product of two matrices
 
@@ -250,13 +241,10 @@ class Vector(SparseMatrix):
             return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
         else:
             return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
-   
+    
     def __str__(self):
-        #Overides the base class as we do not want to print row vectors as [[1,2]] but just [1,2]
-        #Unless we do in which case remove
         if(self.type == "col"):
-            #return super().__str__()
-            return str(np.array(self.matrix.toarray()))
+            return super.__str__()
         else:
-            return str(np.array(self.matrix.toarray()[0]))
+            return str(np.array(self.matrix.toarray()[0][0]))
 
