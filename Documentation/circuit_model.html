@@ -28,8 +28,7 @@ a functionality that will &#39;run&#39; a circuit
 <p class="admonition-title">TODO</p>
 <ul>
 <li>Implementation of gate given a decision on exactly how it will be called/used</li>
-<li>Current quantum circuit implementation will only work for 2x2 matricies, hence as an example
-controlled not gates will not work</li>
+<li>Current quantum circuit implementation will only work for 2x2 matricies</li>
 </ul>
 </div>
 <p>Author(s):
@@ -42,8 +41,7 @@ controlled not gates will not work</li>
 a functionality that will &#39;run&#39; a circuit
 .. todo::
     * Implementation of gate given a decision on exactly how it will be called/used
-    * Current quantum circuit implementation will only work for 2x2 matricies, hence as an example 
-    controlled not gates will not work 
+    * Current quantum circuit implementation will only work for 2x2 matricies
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -78,10 +76,9 @@ class Gate(matrices.SquareMatrix):
         super().__init__(matrix)
 
 class QuantumRegister(matrices.Vector):
-    &#34;&#34;&#34;A system of multiple qubits, abstractly the tensor product of multiple qubits .
-    Practically equivalent to the volatile memory of a CPU in a classical computer
+    &#34;&#34;&#34;A system of multiple qubits, abstractly the addition of multiple single qubits .
     Attributes:
-        register: The tensor product of quBits in the sytem under consideration
+        register: vector representing the qubit state 
     
     &#34;&#34;&#34;
     def __init__(self, register_initial_state, shape=None):
@@ -93,8 +90,6 @@ class QuantumRegister(matrices.Vector):
                 A sparse matrix that represents a quantum register (e.g. as the result of a 
                 computation) 
         
-        .. todo:: 
-            *register_initial_state might not be an accurate name for the parameter 
 
         &#34;&#34;&#34;
         if isinstance(register_initial_state, scipy.sparse.spmatrix):
@@ -152,6 +147,7 @@ class QuantumCircuit(Gate):
     matrix we can create a matrix representing the circuit
     &#34;&#34;&#34;
 
+
     def __init__(self, circuit_in, gates_dictionary = None):
         &#34;&#34;&#34;Creates a quantum circuit which a register can be run on, effecively creating a 
         matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
@@ -169,7 +165,7 @@ class QuantumCircuit(Gate):
                               A list of strings representing each row of the quantum circuit where 
                               each character in the string relates to (or part of) a  quantum gate
                         Or
-                              A matrix representing the circuit
+                              A sparse matrix representing the circuit
             gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
             with id&#39;s matching that of those used in the circuit string or None
         
@@ -183,9 +179,9 @@ class QuantumCircuit(Gate):
             #quantum circuit
             super().__init__(circuit_in)
             return
-        
+       
+
         reversed_strings = self._reverse_gate_string_list(circuit_in) 
-                
                 
         #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
         # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
@@ -195,21 +191,33 @@ class QuantumCircuit(Gate):
 
         # Go through each paralell gate in the list of parallel gates and replace each element with 
         # an matrix representing its gate, then tensor product together the column
-        circuit_matrix_comp = []
+        circuit_matrix_cols = []
         for gate_id_column in reformed_strings:               
             # Go through the whole column and replace each gate_id with actual gate matrix
-            gates_col = self._convert_gate_ids_to_gates(gate_id_column,gates_dictionary)            
+            circuit_matrix_cols.append(self._convert_gate_ids_to_gates(gate_id_column,\
+                                                                       gates_dictionary))
             
-            #Get tensor product of each &#39;column&#39; and add the column (now a single matrix) back to a
-            #list so it can be dotted together ata later point with the rest of the circuit matrix
-
-            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+               
+       
+        #Create the out circuit starting with an identity matrix spaning whole register dimension
+        #to dot everything with, Creates a gate spanning the quRegister
+        dimensions = self._tensor_product_gates(circuit_matrix_cols[0]).shape[0]
+        out_circuit = Gate(np.identity(dimensions))
             
 
-        
-        # Dot each of these component gates together 
-        #Technically is one massive Gate (or at least has same properties) consider use here?
-        super().__init__(self._scalar_product_gates(circuit_matrix_comp))        
+        for gates_col in circuit_matrix_cols: #For each column of gates...
+            
+
+            #Tensor product together the column in the list creates a gate spanning the quRegister
+            current_col = self._tensor_product_gates(gates_col)     
+
+
+            #Dot the produced column to the circuit
+            out_circuit = out_circuit.dot(current_col) 
+
+
+        #Create a gate that will represent the circuit from the final product
+        super().__init__(out_circuit)        
     
    
     def apply(self,quantum_register):
@@ -222,6 +230,7 @@ class QuantumCircuit(Gate):
             Quantum register after passing through the circuit, in a superposition of states
         &#34;&#34;&#34;
         return self*quantum_register
+
 
     @staticmethod
     def _scalar_product_gates(gates):
@@ -257,8 +266,8 @@ class QuantumCircuit(Gate):
         product = gates[0].tensor_product(gates[1]) 
 
         #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
-        if len(gates) &gt; 2: 
-            for gate in gates[2:]: 
+        if len(gates) &gt; 2:
+            for gate in gates[2:]:
                 product = product.tensor_product(gate) 
         return product
 
@@ -311,7 +320,7 @@ class QuantumCircuit(Gate):
         for i in range(len(oppDat)): 
             rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
                                               #position using mod
-        return rDat  </code></pre>
+        return rDat</code></pre>
 </details>
 </section>
 <section>
@@ -411,7 +420,7 @@ A list of strings representing each row of the quantum circuit where
 each character in the string relates to (or part of) a
 quantum gate
 Or
-A matrix representing the circuit</dd>
+A sparse matrix representing the circuit</dd>
 <dt><strong><code>gates_dictionary</code></strong></dt>
 <dd>A dictionary of gate objects relating to those used in the circuit </dd>
 </dl>
@@ -439,6 +448,7 @@ A matrix representing the circuit</dd>
     matrix we can create a matrix representing the circuit
     &#34;&#34;&#34;
 
+
     def __init__(self, circuit_in, gates_dictionary = None):
         &#34;&#34;&#34;Creates a quantum circuit which a register can be run on, effecively creating a 
         matrix that represents a set of gates fed in as a list of strings e.g. the matrix shown
@@ -456,7 +466,7 @@ A matrix representing the circuit</dd>
                               A list of strings representing each row of the quantum circuit where 
                               each character in the string relates to (or part of) a  quantum gate
                         Or
-                              A matrix representing the circuit
+                              A sparse matrix representing the circuit
             gates_dictionary: A dictionary of gate objects relating to those used in the circuit 
             with id&#39;s matching that of those used in the circuit string or None
         
@@ -470,9 +480,9 @@ A matrix representing the circuit</dd>
             #quantum circuit
             super().__init__(circuit_in)
             return
-        
+       
+
         reversed_strings = self._reverse_gate_string_list(circuit_in) 
-                
                 
         #Restructure the data set from [[a_1,a_2,...],[b_1,b_2,...],[c_1,c_2,...]] 
         # to                           [[a_1,b_1,c_1],[a_2,b_2,c_3].[a_3,b_3,c_3],...]
@@ -482,21 +492,33 @@ A matrix representing the circuit</dd>
 
         # Go through each paralell gate in the list of parallel gates and replace each element with 
         # an matrix representing its gate, then tensor product together the column
-        circuit_matrix_comp = []
+        circuit_matrix_cols = []
         for gate_id_column in reformed_strings:               
             # Go through the whole column and replace each gate_id with actual gate matrix
-            gates_col = self._convert_gate_ids_to_gates(gate_id_column,gates_dictionary)            
+            circuit_matrix_cols.append(self._convert_gate_ids_to_gates(gate_id_column,\
+                                                                       gates_dictionary))
             
-            #Get tensor product of each &#39;column&#39; and add the column (now a single matrix) back to a
-            #list so it can be dotted together ata later point with the rest of the circuit matrix
-
-            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+               
+       
+        #Create the out circuit starting with an identity matrix spaning whole register dimension
+        #to dot everything with, Creates a gate spanning the quRegister
+        dimensions = self._tensor_product_gates(circuit_matrix_cols[0]).shape[0]
+        out_circuit = Gate(np.identity(dimensions))
             
 
-        
-        # Dot each of these component gates together 
-        #Technically is one massive Gate (or at least has same properties) consider use here?
-        super().__init__(self._scalar_product_gates(circuit_matrix_comp))        
+        for gates_col in circuit_matrix_cols: #For each column of gates...
+            
+
+            #Tensor product together the column in the list creates a gate spanning the quRegister
+            current_col = self._tensor_product_gates(gates_col)     
+
+
+            #Dot the produced column to the circuit
+            out_circuit = out_circuit.dot(current_col) 
+
+
+        #Create a gate that will represent the circuit from the final product
+        super().__init__(out_circuit)        
     
    
     def apply(self,quantum_register):
@@ -509,6 +531,7 @@ A matrix representing the circuit</dd>
             Quantum register after passing through the circuit, in a superposition of states
         &#34;&#34;&#34;
         return self*quantum_register
+
 
     @staticmethod
     def _scalar_product_gates(gates):
@@ -544,8 +567,8 @@ A matrix representing the circuit</dd>
         product = gates[0].tensor_product(gates[1]) 
 
         #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
-        if len(gates) &gt; 2: 
-            for gate in gates[2:]: 
+        if len(gates) &gt; 2:
+            for gate in gates[2:]:
                 product = product.tensor_product(gate) 
         return product
 
@@ -598,7 +621,7 @@ A matrix representing the circuit</dd>
         for i in range(len(oppDat)): 
             rDat[i%lenIndi].append(oppDat[i]) #Append value to the correct 
                                               #position using mod
-        return rDat  </code></pre>
+        return rDat</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -643,27 +666,27 @@ A matrix representing the circuit</dd>
 <span>(</span><span>register_initial_state, shape=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>A system of multiple qubits, abstractly the tensor product of multiple qubits .
-Practically equivalent to the volatile memory of a CPU in a classical computer</p>
+<section class="desc"><p>A system of multiple qubits, abstractly the addition of multiple single qubits .</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
 <dt><strong><code>register</code></strong></dt>
-<dd>The tensor product of quBits in the sytem under consideration</dd>
+<dd>vector representing the qubit state </dd>
 </dl>
 <p>Initialise a quantum register with specific values</p>
-<div class="admonition todo">
-<p class="admonition-title">TODO</p>
-<p>*register_initial_state might not be an accurate name for the parameter</p>
-</div></section>
+<h2 id="args">Args</h2>
+<p>register_initial_state:Either
+A list of integers related to positions of 1s in the quantum register
+Or
+A sparse matrix that represents a quantum register (e.g. as the result of a
+computation)</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class QuantumRegister(matrices.Vector):
-    &#34;&#34;&#34;A system of multiple qubits, abstractly the tensor product of multiple qubits .
-    Practically equivalent to the volatile memory of a CPU in a classical computer
+    &#34;&#34;&#34;A system of multiple qubits, abstractly the addition of multiple single qubits .
     Attributes:
-        register: The tensor product of quBits in the sytem under consideration
+        register: vector representing the qubit state 
     
     &#34;&#34;&#34;
     def __init__(self, register_initial_state, shape=None):
@@ -675,8 +698,6 @@ Practically equivalent to the volatile memory of a CPU in a classical computer</
                 A sparse matrix that represents a quantum register (e.g. as the result of a 
                 computation) 
         
-        .. todo:: 
-            *register_initial_state might not be an accurate name for the parameter 
 
         &#34;&#34;&#34;
         if isinstance(register_initial_state, scipy.sparse.spmatrix):
