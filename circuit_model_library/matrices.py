@@ -10,11 +10,7 @@
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
-        * Equal sorting of the indicies produces incorrect equalities? 
-    * SquareMatrix:
-        * Different init i.e. using a sparse array?
-    * Vector:
-        * Different init i.e. using a sparse array?
+    
 Author(s):
     * Benjamin Carpenter(s1731178@ed.ac.uk)
 
@@ -35,7 +31,7 @@ class SparseMatrix(object):
         #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
         self.matrix.eliminate_zeros()
-
+        self.shape = self.matrix.shape
         
     def dot(self,matrix):
         """dot/scalar product of two matrices
@@ -48,7 +44,13 @@ class SparseMatrix(object):
         Raises:
             TypeError: on invalid maticie sizes 
         """
+        print("#################################")
         if (isinstance(matrix,SparseMatrix)):
+            print(self.matrix.A.shape)
+            print("-----------------------------")
+            print(matrix.matrix.A.shape)
+            print("=============================")
+            print(self.matrix.dot(matrix.matrix).A)
             return type(self)(self.matrix.dot(matrix.matrix))
 
     def tensor_product(self,matrix):
@@ -64,14 +66,8 @@ class SparseMatrix(object):
             * Testing, better commenting and checking this is actually the correct operation
             * Implement own tensor product function or explain how kron function works for report
         """
-        #test = type(self)(kron(self.matrix, matrix.matrix))
-        #print("###############################")
-        #print(type(self.matrix),type(matrix.matrix))
-        #print(type(test))
-        #print("###############################")
         return type(self)(kron(self.matrix, matrix.matrix))
 
-        #return type(self)(kron(self.matrix, matrix.matrix))
 
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
@@ -130,10 +126,6 @@ class SparseMatrix(object):
             if(isinstance(multiplier,Vector)): #If is multiplied by vector-like object will be 
                                                #(abstractly) a vector itself hence must return new 
                                                #vector (else same type return)
-                print("---------------------------")
-                print(type(multiplier))
-                print(type(self))
-                print("---------------------------")
                 return type(multiplier)(self.matrix*multiplier.matrix) 
             else:
                 return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit

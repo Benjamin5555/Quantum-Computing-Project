@@ -63,8 +63,6 @@ class TestCircuitModel(unittest.TestCase):
         
         
         circuit1 = circuit_model.QuantumCircuit(self.test_circuit_string_list, self.test_gates_dictionary)
-        #print(circuit1)
-        #print("----------------------")
         test_circuit_not_string = ["XXI","XIX"]
         
         
@@ -84,7 +82,13 @@ class TestCircuitModel(unittest.TestCase):
                                                        [1/np.sqrt(2), 0, -(1/np.sqrt(2)), 0]])
 
         assert circuit3== circuit3Expected
-       
+
+        
+    def test_large_string(self):
+        circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
+        circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
+        test_register_00 = circuit_model.QuantumRegister([0],shape = (16,1))
+        assert test_register_00 == circuit4.apply(test_register_00) #Will be equal due to XX = I 
 
     def test_Hadamard_run(self):
         """
@@ -97,13 +101,12 @@ class TestCircuitModel(unittest.TestCase):
         test_register_00 = circuit_model.QuantumRegister([0],shape=(4,1))
         circuit_single_Hadamard = circuit_model.QuantumCircuit(["IH","II"], self.test_gates_dictionary)
 
-        
         out_register = circuit_single_Hadamard.apply(test_register_00)
 
-
         p_calc = np.around(out_register.measure()[1],4)
-        print(out_register.measure()[0])
-        print(out_register.measure()[1])
+        #print(out_register.measure()[0])
+
+        #print(out_register.measure()[1])
         p_exp = [0.5,0.5,0,0] 
         # Expect equal prob of first bit being one as we applied Hadamard to the first bit only
         assert (p_calc == [0.5,0.5]).all()
@@ -112,9 +115,6 @@ class TestCircuitModel(unittest.TestCase):
          
         #I.e. apply Hadamard to single qubit of |00> we expect equal probability of |0> and |1> and 
         # other bit constant |0> state 
-
-
-
 
         """
             Apply a Hadamard to both qubits 

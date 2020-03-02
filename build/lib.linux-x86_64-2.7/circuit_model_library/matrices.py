@@ -10,11 +10,7 @@
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
           also zero index?
-        * Equal sorting of the indicies produces incorrect equalities? 
-    * SquareMatrix:
-        * Different init i.e. using a sparse array?
-    * Vector:
-        * Different init i.e. using a sparse array?
+    
 Author(s):
     * Benjamin Carpenter(s1731178@ed.ac.uk)
 
@@ -35,20 +31,8 @@ class SparseMatrix(object):
         #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
         self.matrix = csr_matrix(matrix)
         self.matrix.eliminate_zeros()
-
-    def tensor_product(self,matrix):
-        """Returns the kronker product of this  matrix with another, when applied to a vector 
-        returns the tensor product a specific case of the kronker product
-        Args:
-            matrix:A sparse matrix acting as the right hand side of the product
-
-        Returns:
-            A sparse matrix representation of self \\(\otimes\\) matrixB
-    
-        .. todo:: Testing, better commenting and checking this is actually the correct operation
-        """
-        return kron(self.matrix, matrix.matrix)
-    
+        self.shape = self.matrix.shape
+        
     def dot(self,matrix):
         """dot/scalar product of two matrices
 
@@ -60,7 +44,30 @@ class SparseMatrix(object):
         Raises:
             TypeError: on invalid maticie sizes 
         """
-        return self.matrix.dot(matrix)
+        print("#################################")
+        if (isinstance(matrix,SparseMatrix)):
+            print(self.matrix.A.shape)
+            print("-----------------------------")
+            print(matrix.matrix.A.shape)
+            print("=============================")
+            print(self.matrix.dot(matrix.matrix).A)
+            return type(self)(self.matrix.dot(matrix.matrix))
+
+    def tensor_product(self,matrix):
+        """Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: 
+            * Testing, better commenting and checking this is actually the correct operation
+            * Implement own tensor product function or explain how kron function works for report
+        """
+        return type(self)(kron(self.matrix, matrix.matrix))
+
 
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
@@ -195,7 +202,10 @@ class SquareMatrix(SparseMatrix):
         Raises:
             AssertionError: On recieving an incorrect shaped matrix (i.e. non 2D square matrix)
         """
-    
+        if(isinstance(matrix,SparseMatrix)):
+            matrix = matrix.matrix # Can only construct from component matrix not from gates itself
+
+
         assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
         
         
@@ -241,10 +251,13 @@ class Vector(SparseMatrix):
             return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
         else:
             return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
-    
+   
     def __str__(self):
+        #Overides the base class as we do not want to print row vectors as [[1,2]] but just [1,2]
+        #Unless we do in which case remove
         if(self.type == "col"):
-            return super.__str__()
+            #return super().__str__()
+            return str(np.array(self.matrix.toarray()))
         else:
-            return str(np.array(self.matrix.toarray()[0][0]))
+            return str(np.array(self.matrix.toarray()[0]))
 

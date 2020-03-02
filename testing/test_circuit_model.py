@@ -63,8 +63,6 @@ class TestCircuitModel(unittest.TestCase):
         
         
         circuit1 = circuit_model.QuantumCircuit(self.test_circuit_string_list, self.test_gates_dictionary)
-        #print(circuit1)
-        #print("----------------------")
         test_circuit_not_string = ["XXI","XIX"]
         
         
@@ -87,7 +85,6 @@ class TestCircuitModel(unittest.TestCase):
 
         
     def test_large_string(self):
-        #print("START LARGE STRING TEST")
         circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
         circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
         test_register_00 = circuit_model.QuantumRegister([0],shape = (16,1))
