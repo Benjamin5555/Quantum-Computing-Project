@@ -44,13 +44,7 @@ class SparseMatrix(object):
         Raises:
             TypeError: on invalid maticie sizes 
         """
-        print("#################################")
         if (isinstance(matrix,SparseMatrix)):
-            print(self.matrix.A.shape)
-            print("-----------------------------")
-            print(matrix.matrix.A.shape)
-            print("=============================")
-            print(self.matrix.dot(matrix.matrix).A)
             return type(self)(self.matrix.dot(matrix.matrix))
 
     def tensor_product(self,matrix):
@@ -256,8 +250,8 @@ class Vector(SparseMatrix):
         #Overides the base class as we do not want to print row vectors as [[1,2]] but just [1,2]
         #Unless we do in which case remove
         if(self.type == "col"):
-            #return super().__str__()
-            return str(np.array(self.matrix.toarray()))
+            return super().__str__()
+            #return str(np.array(self.matrix.toarray()))
         else:
             return str(np.array(self.matrix.toarray()[0]))
 
