@@ -191,25 +191,7 @@ class QuantumCircuit(Gate):
             Quantum register after passing through the circuit, in a superposition of states
         """
         return self*quantum_register
-
-
-    @staticmethod
-    def _scalar_product_gates(gates):
-        """Gets the scalar (dot) product of a list of gates
-        e.g. a list [a,b,c,d] of gates -> a . b . c . d where . is the scalar product is returned
-        Args:
-            gates: A list of multiple gates to get the scalar product of
-
-        Returns: 
-            The scalar product of the passed array of gates
-        """
-        returnGate = np.array(gates[0])
-        for column in gates[1:]:
-            returnGate = returnGate.dot(column)
-        
-        return returnGate
     
-
 
     @staticmethod
     def _tensor_product_gates(gates):
