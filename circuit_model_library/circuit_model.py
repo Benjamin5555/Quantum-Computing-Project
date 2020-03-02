@@ -160,7 +160,7 @@ class QuantumCircuit(Gate):
             #Get tensor product of each 'column' and add the column (now a single matrix) back to a
             #list so it can be dotted together ata later point with the rest of the circuit matrix
 
-            circuit_matrix_comp.append(self._tensor_product_gates(gates_col))
+            circuit_matrix_comp.append(self._tensor_product_gates(gates_col)) 
             
 
         
@@ -179,6 +179,7 @@ class QuantumCircuit(Gate):
             Quantum register after passing through the circuit, in a superposition of states
         """
         return self*quantum_register
+
 
     @staticmethod
     def _scalar_product_gates(gates):

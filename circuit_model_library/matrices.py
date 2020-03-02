@@ -36,6 +36,21 @@ class SparseMatrix(object):
         self.matrix = csr_matrix(matrix)
         self.matrix.eliminate_zeros()
 
+        
+    def dot(self,matrix):
+        """dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        """
+        if (isinstance(matrix,SparseMatrix)):
+            return type(self)(self.matrix.dot(matrix.matrix))
+
     def tensor_product(self,matrix):
         """Returns the kronker product of this  matrix with another, when applied to a vector 
         returns the tensor product a specific case of the kronker product
@@ -49,27 +64,14 @@ class SparseMatrix(object):
             * Testing, better commenting and checking this is actually the correct operation
             * Implement own tensor product function or explain how kron function works for report
         """
-        test = type(self)(kron(self.matrix, matrix.matrix))
-        print("###############################")
-        print(type(self.matrix),type(matrix.matrix))
-        print(type(test))
-        print("###############################")
+        #test = type(self)(kron(self.matrix, matrix.matrix))
+        #print("###############################")
+        #print(type(self.matrix),type(matrix.matrix))
+        #print(type(test))
+        #print("###############################")
         return type(self)(kron(self.matrix, matrix.matrix))
 
         #return type(self)(kron(self.matrix, matrix.matrix))
-        
-    def dot(self,matrix):
-        """dot/scalar product of two matrices
-
-        Args:
-            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
-        Returns:
-            The dot (scalar) product of two matrices A and B
-        
-        Raises:
-            TypeError: on invalid maticie sizes 
-        """
-        return self.matrix.dot(matrix)
 
     def __str__(self):
         return str(np.array(self.matrix.toarray()))
@@ -128,6 +130,10 @@ class SparseMatrix(object):
             if(isinstance(multiplier,Vector)): #If is multiplied by vector-like object will be 
                                                #(abstractly) a vector itself hence must return new 
                                                #vector (else same type return)
+                print("---------------------------")
+                print(type(multiplier))
+                print(type(self))
+                print("---------------------------")
                 return type(multiplier)(self.matrix*multiplier.matrix) 
             else:
                 return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
@@ -204,7 +210,10 @@ class SquareMatrix(SparseMatrix):
         Raises:
             AssertionError: On recieving an incorrect shaped matrix (i.e. non 2D square matrix)
         """
-    
+        if(isinstance(matrix,SparseMatrix)):
+            matrix = matrix.matrix # Can only construct from component matrix not from gates itself
+
+
         assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
         
         
