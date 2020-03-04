@@ -176,6 +176,9 @@ class QuantumCircuit(Gate):
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col)
             else: 
+                print("Flag")
+                print(current_col)
+                print(current_col)
                 #Added a special condition for non 2x2 matrices such as the controlled Z that just 
                 #adds the first matrix into the circuit
                 out_circuit = out_circuit.dot(current_col)

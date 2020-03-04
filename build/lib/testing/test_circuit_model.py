@@ -137,16 +137,13 @@ class TestCircuitModel(unittest.TestCase):
        
 
     def test_grovers_c_00(self):
-        print("TEST GROVERS 00")
-        
         test_grovers_00 = ["HXZXHzZH",\
                            "HXZXHzZH"]
 
         circuit_Grover_00 = circuit_model.QuantumCircuit(test_grovers_00,\
                                                           self.test_gates_dictionary)
 
-        print(circuit_Grover_00.matrix.A)
-        print("PRE ASSERT")
+
         assert (circuit_Grover_00.matrix == np.array([[1,  0,  0,  0],\
                                                      [0,  0, -1,  0],\
                                                      [0, -1,  0,  0],\
@@ -187,7 +184,7 @@ class TestCircuitModel(unittest.TestCase):
         circuit_Grover_11 = circuit_model.QuantumCircuit(test_grovers_11,\
                                                           self.test_gates_dictionary)
 
-        print(circuit_Grover_11.matrix.A)
+        print(circuit_Grover_11.matrix)
         print("PRE ASSERT")
         assert (circuit_Grover_11.matrix == np.array([[ 0,  0,  0,  1],\
                                                      [ 0,  1,  0,  0],\
