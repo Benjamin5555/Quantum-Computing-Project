@@ -108,7 +108,7 @@ class TestSquareMatrixImp(unittest.TestCase):
 
         assert testRVector[2]==0 #Ditto
 
-    def test_mult_ops(self):
+    #def test_mult_ops(self):
 
 
 

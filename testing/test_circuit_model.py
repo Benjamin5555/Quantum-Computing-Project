@@ -121,9 +121,7 @@ class TestCircuitModel(unittest.TestCase):
         out_register = circuit_single_Hadamard.apply(test_register_00)
 
         p_calc = np.around(out_register.measure()[1],4)
-        #print(out_register.measure()[0])
 
-        #print(out_register.measure()[1])
         p_exp = [0.5,0.5,0,0] 
         # Expect equal prob of first bit being one as we applied Hadamard to the first bit only
         assert (p_calc == [0.5,0.5]).all()
@@ -211,51 +209,62 @@ class TestCircuitModel(unittest.TestCase):
        
 
     def test_grovers_c_00(self):
-        #print("TEST GROVERS 00")
         
         test_grovers_00 = ["HXZXHzZH",\
                            "HXZXHzZH"]
 
         circuit_Grover_00 = circuit_model.QuantumCircuit(test_grovers_00,\
                                                           self.test_gates_dictionary)
-
-        #print(circuit_Grover_00.matrix.A)
-        #print("PRE ASSERT")
-        assert (circuit_Grover_00.matrix == np.array([[1,  0,  0,  0],\
+ 
+        assert (np.around(circuit_Grover_00.matrix.A,4) == np.array([[1,  0,  0,  0],\
                                                      [0,  0, -1,  0],\
                                                      [0, -1,  0,  0],\
                                                      [0,  0,  0, -1]])).all
+        
+        qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
+        out_register = circuit_Grover_00.apply(qu_reg_00)
+        assert out_register.measure()[0] == [0]
+        assert np.around(out_register.measure()[1],4) == [1]
+
+
 
     def test_grovers_c_01(self):
-        print("Relevant Test")
-        test_grovers_01 = ["HIZIHzZH",\
-                           "HXZXHzZH"]
+        test_grovers_01 = ["HXZXHzZH",\
+                           "HIZIHzZH"]
 
         circuit_Grover_01 = circuit_model.QuantumCircuit(test_grovers_01,\
                                                           self.test_gates_dictionary)
 
-
-        print("PRE ASSERT")
-        assert (circuit_Grover_01.matrix == np.array([[ 0,  0,  1,  0],\
-                                                     [-1,  0,  0,  0],\
-                                                     [ 0,  0,  0,  1],\
-                                                     [ 0,  1,  0,  0]])).all()
+        assert (np.around(circuit_Grover_01.matrix.A,4) == np.array([[0,  0, -1, 0],\
+                                                      [1,  0,  0, 0],\
+                                                      [0,  0,  0, 1],\
+                                                      [0,  1,  0, 0]])).all()
+        
+        qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
+        out_register = circuit_Grover_01.apply(qu_reg_00)
+        assert out_register.measure()[0] == [1]
+        assert np.around(out_register.measure()[1],4) == [1]
 
     def test_grovers_c_10(self):
-        test_grovers_10 = ["HXZXHzZH",\
-                           "HIZIHzZH"]
+        test_grovers_10 = ["HIZIHzZH",\
+                           "HXZXHzZH"]
 
         circuit_Grover_10 = circuit_model.QuantumCircuit(test_grovers_10,\
                                                           self.test_gates_dictionary)
 
 
-        assert (circuit_Grover_10.matrix == np.array([[ 0,  1,  0,  0],\
+        assert (np.around(circuit_Grover_10.matrix.A,4) == np.array(\
+                                                    [[ 0, -1,  0,  0],\
                                                      [ 0,  0,  0,  1],\
-                                                     [-1,  0,  0,  0],\
+                                                     [ 1,  0,  0,  0],\
                                                      [ 0,  0,  1,  0]])).all()
+        
+        qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
+        out_register = circuit_Grover_10.apply(qu_reg_00)
+        assert out_register.measure()[0] == [2]
+        assert np.around(out_register.measure()[1],4) == [1]
 
     def test_grovers_c_11(self):            
-        #print("TEST GROVER |11>")
         
         test_grovers_11 = ["HIZIHzZH",\
                            "HIZIHzZH"]
@@ -263,9 +272,13 @@ class TestCircuitModel(unittest.TestCase):
         circuit_Grover_11 = circuit_model.QuantumCircuit(test_grovers_11,\
                                                           self.test_gates_dictionary)
 
-        #print(circuit_Grover_11.matrix.A)
-        #print("PRE ASSERT")
-        assert (circuit_Grover_11.matrix == np.array([[ 0,  0,  0,  1],\
-                                                     [ 0,  1,  0,  0],\
-                                                     [ 0,  0,  1,  0],\
-                                                     [-1,  0,  0,  0]])).all()
+        assert (np.around(circuit_Grover_11.matrix.A,4) == np.array(\
+                                                    [[ 0,  0,  0, - 1],\
+                                                     [ 0,  1,  0,   0],\
+                                                     [ 0,  0,  1,   0],\
+                                                     [ 1,  0,  0,   0]])).all()
+        qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
+        out_register = circuit_Grover_11.apply(qu_reg_00)
+        assert out_register.measure()[0] == [3]
+        assert np.around(out_register.measure()[1],4) == [1]
+

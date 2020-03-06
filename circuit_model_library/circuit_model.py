@@ -172,21 +172,22 @@ class QuantumCircuit(Gate):
                 #Tensor product together the column in the list creates a gate spanning the
                 #quRegister
                 
-                current_col = self._tensor_product_gates(gates_col)     
-
+                current_col = self._tensor_product_gates(gates_col)  
+                
+                
+                
                 
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col) 
-                #print("#####################")
-                #print(out_circuit)
-                #print("#####################")
+            
+                
+                
+                
+
             else:
                 
                 out_circuit = out_circuit.dot(gates_col[0])
-            print("######################")
-            print(out_circuit)
-            print("######################")
-
+        
         #Create a gate that will represent the circuit from the final product
         super().__init__(out_circuit)        
     
