@@ -12,6 +12,9 @@ import numpy as np
 from scipy.sparse import csr_matrix
 import inspect
 
+
+
+
 class TestCircuitModel(unittest.TestCase):
     """
 
@@ -113,7 +116,7 @@ class TestCircuitModel(unittest.TestCase):
             Apply to Hadamard gate to single qubit
         """
         test_register_00 = circuit_model.QuantumRegister([0],shape=(4,1))
-        circuit_single_Hadamard = circuit_model.QuantumCircuit(["IH","II"], self.test_gates_dictionary)
+        circuit_single_Hadamard = circuit_model.QuantumCircuit(["II","HI"], self.test_gates_dictionary)
 
         out_register = circuit_single_Hadamard.apply(test_register_00)
 
@@ -124,6 +127,7 @@ class TestCircuitModel(unittest.TestCase):
         p_exp = [0.5,0.5,0,0] 
         # Expect equal prob of first bit being one as we applied Hadamard to the first bit only
         assert (p_calc == [0.5,0.5]).all()
+        
         assert (out_register.measure()[0] == [0,1]).all()
 
          
@@ -146,27 +150,65 @@ class TestCircuitModel(unittest.TestCase):
 
     def basic_circuit_creation_definitions(self):
         qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
-        expected_IcIBHnH = circuit_model.QuantumCircuit(\
+        qu_reg_10 = circuit_model.QuantumRegister([2],(4,1))
+
+        expected_1 = circuit_model.QuantumCircuit(\
                 csr_matrix(\
                 [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]]))
 
-        gen_ICIBHnH = circuit_model.QuantumCircuit(["IcI","HcH"],self.test_gates_dictionary)
-        print("------------")
-        print(expected_IcIBHnH)
-        print("------------")
-        print(gen_ICIBHnH)
-        print("------------")
-        return qu_reg_00,expected_IcIBHnH,gen_ICIBHnH
+        gen_1 = circuit_model.QuantumCircuit(["IcI","HcH"],self.test_gates_dictionary)
+
+        expected_2 = circuit_model.QuantumCircuit(\
+                csr_matrix(\
+                [[1/2, 1/2, 1/2, -(1/2)], [1/2, 1/2, -(1/2), 1/2], [1/2, -(1/2), 1/2,\
+                1/2], [-(1/2), 1/2, 1/2, 1/2]]))
+        gen_2 = circuit_model.QuantumCircuit(["HcH","IcI"],self.test_gates_dictionary)
+
+
+
+        return qu_reg_00,qu_reg_10,expected_1,gen_1,expected_2,gen_2
 
     def test_basic_circuit_creation(self):
-        print("RELEVANT TEST")
-        qu_reg_00,expected_IcIBHnH,gen_ICIBHnH = self.basic_circuit_creation_definitions()
-        print("PRE ASSERT")
-        assert (expected_IcIBHnH == gen_ICIBHnH).all
+        qu_reg_00,qu_reg_10,expected_1,gen_1,*_= self.basic_circuit_creation_definitions()
+        assert (expected_1 == gen_1)
 
 
+    def test_intermediate_circuit_Application(self):
 
+        qu_reg_00,qu_reg_10,expected_1,gen_1,expected_2,gen_2 =\
+                self.basic_circuit_creation_definitions()
+        #EFFECTIVELY AN IDENTITY MATRIX
+        assert (gen_1.apply(qu_reg_00).measure()[0]\
+                == expected_1.apply(qu_reg_00).measure()[0]).all()
 
+        assert (np.around(gen_1.apply(qu_reg_00).measure()[1],4)\
+                == np.around(expected_1.apply(qu_reg_00).measure()[1],4)).all()
+        
+        assert (gen_1.apply(qu_reg_00).measure()[0]\
+                == [0]).all() 
+
+        assert (np.around(gen_1.apply(qu_reg_00).measure()[1],4)\
+                == [1]).all()
+
+        assert (gen_1.apply(qu_reg_10).measure()[0]\
+                == [2]).all() 
+
+        assert (np.around(gen_1.apply(qu_reg_10).measure()[1],4)\
+                == [1]).all()
+        #NOT EFFECTIVELY AN IDENTITY MATRIX
+        assert (gen_2.apply(qu_reg_00).measure()[0]\
+                == expected_2.apply(qu_reg_00).measure()[0]).all()
+
+        assert (np.around(gen_2.apply(qu_reg_00).measure()[1],4)\
+                == np.around(expected_2.apply(qu_reg_00).measure()[1],4)).all()
+        
+        assert (gen_2.apply(qu_reg_00).measure()[0]\
+                == [0,1,2,3]).all() 
+
+        assert (np.around(gen_2.apply(qu_reg_00).measure()[1],4)\
+                == [0.25,0.25,0.25,0.25]).all()
+
+       
 
     def test_grovers_c_00(self):
         #print("TEST GROVERS 00")
@@ -185,6 +227,7 @@ class TestCircuitModel(unittest.TestCase):
                                                      [0,  0,  0, -1]])).all
 
     def test_grovers_c_01(self):
+        print("Relevant Test")
         test_grovers_01 = ["HIZIHzZH",\
                            "HXZXHzZH"]
 
@@ -192,6 +235,7 @@ class TestCircuitModel(unittest.TestCase):
                                                           self.test_gates_dictionary)
 
 
+        print("PRE ASSERT")
         assert (circuit_Grover_01.matrix == np.array([[ 0,  0,  1,  0],\
                                                      [-1,  0,  0,  0],\
                                                      [ 0,  0,  0,  1],\

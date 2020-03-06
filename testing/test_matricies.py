@@ -108,6 +108,10 @@ class TestSquareMatrixImp(unittest.TestCase):
 
         assert testRVector[2]==0 #Ditto
 
+    def test_mult_ops(self):
+
+
+
     def test_Vector_basic_operations(self):
         testCVectorA, testCVectorB, testRVector,rv, cv,cv2 = self.create_Vectors()
         testSqMatrixA, testSqMatrixB, mc, mc2 = self.create_SquareMatrix()
