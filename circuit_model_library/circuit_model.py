@@ -168,18 +168,16 @@ class QuantumCircuit(Gate):
 
         for gates_col in circuit_matrix_cols: #For each column of gates...
             
-            if(gates_col[0].shape[0] == 2):#For a normal 2x2 matrix
-                #Tensor product together the column in the list creates a gate spanning the quReg
-                current_col = self._tensor_product_gates(gates_col)     
+
+            #Tensor product together the column in the list creates a gate spanning the quRegister
+            current_col = self._tensor_product_gates(gates_col)     
 
 
-                #Dot the produced column to the circuit
-                out_circuit = out_circuit.dot(current_col)
-            else: 
-                #Added a special condition for non 2x2 matrices such as the controlled Z that just 
-                #adds the first matrix into the circuit
-                out_circuit = out_circuit.dot(current_col)
-
+            #Dot the produced column to the circuit
+            out_circuit = out_circuit.dot(current_col) 
+            print("#####################")
+            print(out_circuit)
+            print("#####################")
 
         #Create a gate that will represent the circuit from the final product
         super().__init__(out_circuit)        
@@ -215,7 +213,6 @@ class QuantumCircuit(Gate):
         #Apply tensor product to rest of the 'column' (though only if there are more elements)
         if len(gates) > 2:
             for gate in gates[2:]:
-                #product = gate.tensor_product(product) 
                 product = product.tensor_product(gate)
         return product
 

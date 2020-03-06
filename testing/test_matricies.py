@@ -123,7 +123,7 @@ class TestSquareMatrixImp(unittest.TestCase):
 
     def tensor_test_def(self):
        a = matrices.SparseMatrix([[1, 0, -1, 0], [-1, 1, 1, 0], [2, 4, -2, 1], [0, 0, 0, 1]])
-       b = matrices.SparseMatrix([[1, 0], [1, 3]])
+       b = matrices.SparseMatrix([[1, 0], [1, 1]])
        c = matrices.SparseMatrix([[5, 1,   2, 3], [12, 31, 94, 21], [134, 34, 5, 2], [3, 1, 1, 0]]) 
        d = matrices.SparseMatrix([[-1,1],[-1,0]])
 
@@ -135,27 +135,20 @@ class TestSquareMatrixImp(unittest.TestCase):
        o1 = matrices.SparseMatrix(o1)
 
        #o2 = tensorproduct of a,b
-       o2 =   [[ 1,  0, 0,  0, -1, 0, 0, 0],\
-               [ 1,  3, 0,  0, -1, -3, 0, 0],\
-               [-1,  0, 1,  0,  1, 0, 0, 0],\
-               [-1, -3, 1,  3, 1, 3, 0, 0],\
-               [ 2,  0, 4,  0, -2, 0, 1,  0],\
-               [ 2,  6, 4, 12, -2, -6, 1, 3],\
-               [ 0,  0, 0,  0, 0, 0, 1, 0],\
-               [ 0,  0, 0,  0, 0, 0, 1, 3]]
-
+       o2 =   [[1, 0, 0, 0, -1, 0, 0, 0], [1, 1, 0, 0, -1, -1, 0, 0], [-1, 0, 1, 0, \
+               1, 0, 0, 0], [-1, -1, 1, 1, 1, 1, 0, 0], [2, 0, 4, 0, -2, 0, 1,      \
+               0], [2, 2, 4, 4, -2, -2, 1, 1], [0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0,  \
+               0, 0, 0, 1, 1]]
+              
        o2 = matrices.SparseMatrix(o2)
 
        #tensor product of b,a
-       o3 = [[1, 0, -1, 0, 0, 0, 0, 0],\
-             [-1, 1, 1, 0, 0, 0, 0, 0],\
-             [2, 4, -2, 1, 0, 0, 0, 0],\
-             [0, 0, 0, 1, 0, 0, 0, 0],\
-             [1, 0, -1, 0, 1, 0, -1, 0],\
-             [-1, 1, 1, 0, -1, 1, 1, 0],\
-             [2, 4, -2, 1, 2, 4, -2, 1],\
-             [0, 0, 0, 1, 0, 0, 0, 1]]
-
+       o3 =[[1, 0, -1, 0, 0, 0, 0, 0], [-1, 1, 1, 0, 0, 0, 0, 0], [2, 4, -2, 1, \
+            0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0], [1, 0, -1, 0, 1, 0, -1,      \
+            0], [-1, 1, 1, 0, -1, 1, 1, 0], [2, 4, -2, 1, 2, 4, -2, 1], [0, 0,  \
+            0, 1, 0, 0, 0, 1]]       
+       
+       
        o3 = matrices.SparseMatrix(o3)
 
        #Tensor product of a,c
@@ -185,6 +178,7 @@ class TestSquareMatrixImp(unittest.TestCase):
        # b tensor d 
        assert b.tensor_product(d) == o1 
        # a ten   b
+
        assert a.tensor_product(b) == o2
        # b teso  a 
        assert b.tensor_product(a) == o3 
