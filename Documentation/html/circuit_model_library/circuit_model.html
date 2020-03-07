@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>circuit_model API documentation</title>
+<title>circuit_model_library.circuit_model API documentation</title>
 <meta name="description" content="This module details the main and specific functionality of the circuit model including
 a functionality that will &#39;run&#39; a circuit
 .. todo::
@@ -21,7 +21,7 @@ a functionality that will &#39;run&#39; a circuit
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>circuit_model</code></h1>
+<h1 class="title">Module <code>circuit_model_library.circuit_model</code></h1>
 </header>
 <section id="section-intro">
 <div class="admonition todo">
@@ -207,15 +207,26 @@ class QuantumCircuit(Gate):
 
         for gates_col in circuit_matrix_cols: #For each column of gates...
             
+            if(gates_col[0].shape[0] == 2): #For 2x2 case
+                #Tensor product together the column in the list creates a gate spanning the
+                #quRegister
+                
+                current_col = self._tensor_product_gates(gates_col)  
+                
+                
+                
+                
+                #Dot the produced column to the circuit
+                out_circuit = out_circuit.dot(current_col) 
+            
+                
+                
+                
 
-            #Tensor product together the column in the list creates a gate spanning the quRegister
-            current_col = self._tensor_product_gates(gates_col)     
-
-
-            #Dot the produced column to the circuit
-            out_circuit = out_circuit.dot(current_col) 
-
-
+            else:
+                
+                out_circuit = out_circuit.dot(gates_col[0])
+        
         #Create a gate that will represent the circuit from the final product
         super().__init__(out_circuit)        
     
@@ -230,25 +241,7 @@ class QuantumCircuit(Gate):
             Quantum register after passing through the circuit, in a superposition of states
         &#34;&#34;&#34;
         return self*quantum_register
-
-
-    @staticmethod
-    def _scalar_product_gates(gates):
-        &#34;&#34;&#34;Gets the scalar (dot) product of a list of gates
-        e.g. a list [a,b,c,d] of gates -&gt; a . b . c . d where . is the scalar product is returned
-        Args:
-            gates: A list of multiple gates to get the scalar product of
-
-        Returns: 
-            The scalar product of the passed array of gates
-        &#34;&#34;&#34;
-        returnGate = np.array(gates[0])
-        for column in gates[1:]:
-            returnGate = returnGate.dot(column)
-        
-        return returnGate
     
-
 
     @staticmethod
     def _tensor_product_gates(gates):
@@ -268,7 +261,7 @@ class QuantumCircuit(Gate):
         #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
         if len(gates) &gt; 2:
             for gate in gates[2:]:
-                product = product.tensor_product(gate) 
+                product = product.tensor_product(gate)
         return product
 
     
@@ -332,7 +325,7 @@ class QuantumCircuit(Gate):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="circuit_model.Gate"><code class="flex name class">
+<dt id="circuit_model_library.circuit_model.Gate"><code class="flex name class">
 <span>class <span class="ident">Gate</span></span>
 <span>(</span><span>matrix, gate_id=None)</span>
 </code></dt>
@@ -387,15 +380,27 @@ Args:</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>circuit_model_library.matrices.SquareMatrix</li>
-<li>circuit_model_library.matrices.SparseMatrix</li>
+<li><a title="circuit_model_library.matrices.SquareMatrix" href="matrices.html#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></li>
+<li><a title="circuit_model_library.matrices.SparseMatrix" href="matrices.html#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="circuit_model.QuantumCircuit" href="#circuit_model.QuantumCircuit">QuantumCircuit</a></li>
+<li><a title="circuit_model_library.circuit_model.QuantumCircuit" href="#circuit_model_library.circuit_model.QuantumCircuit">QuantumCircuit</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="circuit_model_library.matrices.SquareMatrix" href="matrices.html#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></b></code>:
+<ul class="hlist">
+<li><code><a title="circuit_model_library.matrices.SquareMatrix.conjugate" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SquareMatrix.conjugate_transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SquareMatrix.dot" href="matrices.html#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SquareMatrix.tensor_product" href="matrices.html#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SquareMatrix.transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
-<dt id="circuit_model.QuantumCircuit"><code class="flex name class">
+<dt id="circuit_model_library.circuit_model.QuantumCircuit"><code class="flex name class">
 <span>class <span class="ident">QuantumCircuit</span></span>
 <span>(</span><span>circuit_in, gates_dictionary=None)</span>
 </code></dt>
@@ -508,15 +513,26 @@ A sparse matrix representing the circuit</dd>
 
         for gates_col in circuit_matrix_cols: #For each column of gates...
             
+            if(gates_col[0].shape[0] == 2): #For 2x2 case
+                #Tensor product together the column in the list creates a gate spanning the
+                #quRegister
+                
+                current_col = self._tensor_product_gates(gates_col)  
+                
+                
+                
+                
+                #Dot the produced column to the circuit
+                out_circuit = out_circuit.dot(current_col) 
+            
+                
+                
+                
 
-            #Tensor product together the column in the list creates a gate spanning the quRegister
-            current_col = self._tensor_product_gates(gates_col)     
-
-
-            #Dot the produced column to the circuit
-            out_circuit = out_circuit.dot(current_col) 
-
-
+            else:
+                
+                out_circuit = out_circuit.dot(gates_col[0])
+        
         #Create a gate that will represent the circuit from the final product
         super().__init__(out_circuit)        
     
@@ -531,25 +547,7 @@ A sparse matrix representing the circuit</dd>
             Quantum register after passing through the circuit, in a superposition of states
         &#34;&#34;&#34;
         return self*quantum_register
-
-
-    @staticmethod
-    def _scalar_product_gates(gates):
-        &#34;&#34;&#34;Gets the scalar (dot) product of a list of gates
-        e.g. a list [a,b,c,d] of gates -&gt; a . b . c . d where . is the scalar product is returned
-        Args:
-            gates: A list of multiple gates to get the scalar product of
-
-        Returns: 
-            The scalar product of the passed array of gates
-        &#34;&#34;&#34;
-        returnGate = np.array(gates[0])
-        for column in gates[1:]:
-            returnGate = returnGate.dot(column)
-        
-        return returnGate
     
-
 
     @staticmethod
     def _tensor_product_gates(gates):
@@ -569,7 +567,7 @@ A sparse matrix representing the circuit</dd>
         #Apply tensor product to rest of the &#39;column&#39; (though only if there are more elements)
         if len(gates) &gt; 2:
             for gate in gates[2:]:
-                product = product.tensor_product(gate) 
+                product = product.tensor_product(gate)
         return product
 
     
@@ -625,13 +623,13 @@ A sparse matrix representing the circuit</dd>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="circuit_model.Gate" href="#circuit_model.Gate">Gate</a></li>
-<li>circuit_model_library.matrices.SquareMatrix</li>
-<li>circuit_model_library.matrices.SparseMatrix</li>
+<li><a title="circuit_model_library.circuit_model.Gate" href="#circuit_model_library.circuit_model.Gate">Gate</a></li>
+<li><a title="circuit_model_library.matrices.SquareMatrix" href="matrices.html#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></li>
+<li><a title="circuit_model_library.matrices.SparseMatrix" href="matrices.html#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="circuit_model.QuantumCircuit.apply"><code class="name flex">
+<dt id="circuit_model_library.circuit_model.QuantumCircuit.apply"><code class="name flex">
 <span>def <span class="ident">apply</span></span>(<span>self, quantum_register)</span>
 </code></dt>
 <dd>
@@ -660,8 +658,20 @@ A sparse matrix representing the circuit</dd>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="circuit_model_library.circuit_model.Gate" href="#circuit_model_library.circuit_model.Gate">Gate</a></b></code>:
+<ul class="hlist">
+<li><code><a title="circuit_model_library.circuit_model.Gate.conjugate" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.Gate.conjugate_transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.Gate.dot" href="matrices.html#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.Gate.tensor_product" href="matrices.html#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.Gate.transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
-<dt id="circuit_model.QuantumRegister"><code class="flex name class">
+<dt id="circuit_model_library.circuit_model.QuantumRegister"><code class="flex name class">
 <span>class <span class="ident">QuantumRegister</span></span>
 <span>(</span><span>register_initial_state, shape=None)</span>
 </code></dt>
@@ -743,12 +753,12 @@ computation)</p></section>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>circuit_model_library.matrices.Vector</li>
-<li>circuit_model_library.matrices.SparseMatrix</li>
+<li><a title="circuit_model_library.matrices.Vector" href="matrices.html#circuit_model_library.matrices.Vector">Vector</a></li>
+<li><a title="circuit_model_library.matrices.SparseMatrix" href="matrices.html#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="circuit_model.QuantumRegister.measure"><code class="name flex">
+<dt id="circuit_model_library.circuit_model.QuantumRegister.measure"><code class="name flex">
 <span>def <span class="ident">measure</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -791,6 +801,18 @@ any superposition is collapsed on measurments) e.g. |11&gt; has a 'state value' 
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="circuit_model_library.matrices.Vector" href="matrices.html#circuit_model_library.matrices.Vector">Vector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="circuit_model_library.matrices.Vector.conjugate" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.matrices.Vector.conjugate_transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.matrices.Vector.dot" href="matrices.html#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.matrices.Vector.tensor_product" href="matrices.html#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.matrices.Vector.transpose" href="matrices.html#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -801,21 +823,26 @@ any superposition is collapsed on measurments) e.g. |11&gt; has a 'state value' 
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="circuit_model_library" href="index.html">circuit_model_library</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="circuit_model.Gate" href="#circuit_model.Gate">Gate</a></code></h4>
+<h4><code><a title="circuit_model_library.circuit_model.Gate" href="#circuit_model_library.circuit_model.Gate">Gate</a></code></h4>
 </li>
 <li>
-<h4><code><a title="circuit_model.QuantumCircuit" href="#circuit_model.QuantumCircuit">QuantumCircuit</a></code></h4>
+<h4><code><a title="circuit_model_library.circuit_model.QuantumCircuit" href="#circuit_model_library.circuit_model.QuantumCircuit">QuantumCircuit</a></code></h4>
 <ul class="">
-<li><code><a title="circuit_model.QuantumCircuit.apply" href="#circuit_model.QuantumCircuit.apply">apply</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.QuantumCircuit.apply" href="#circuit_model_library.circuit_model.QuantumCircuit.apply">apply</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="circuit_model.QuantumRegister" href="#circuit_model.QuantumRegister">QuantumRegister</a></code></h4>
+<h4><code><a title="circuit_model_library.circuit_model.QuantumRegister" href="#circuit_model_library.circuit_model.QuantumRegister">QuantumRegister</a></code></h4>
 <ul class="">
-<li><code><a title="circuit_model.QuantumRegister.measure" href="#circuit_model.QuantumRegister.measure">measure</a></code></li>
+<li><code><a title="circuit_model_library.circuit_model.QuantumRegister.measure" href="#circuit_model_library.circuit_model.QuantumRegister.measure">measure</a></code></li>
 </ul>
 </li>
 </ul>
