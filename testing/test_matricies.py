@@ -101,12 +101,16 @@ class TestSquareMatrixImp(unittest.TestCase):
         """Testing accessing elements within a vector
         
         """
-        
+         
         testCVectorA, testCVectorB, testRVector,*_ = self.create_Vectors()
 
         assert testCVectorA[1] == 2 #(Bad) testing acccesses 
 
         assert testRVector[2]==0 #Ditto
+
+    #def test_mult_ops(self):
+
+
 
     def test_Vector_basic_operations(self):
         testCVectorA, testCVectorB, testRVector,rv, cv,cv2 = self.create_Vectors()
@@ -119,6 +123,71 @@ class TestSquareMatrixImp(unittest.TestCase):
 
         assert (testSqMatrixA  * testCVectorA) == matrices.SparseMatrix(np.matmul(mc,cv))
 
+
+
+    def tensor_test_def(self):
+       a = matrices.SparseMatrix([[1, 0, -1, 0], [-1, 1, 1, 0], [2, 4, -2, 1], [0, 0, 0, 1]])
+       b = matrices.SparseMatrix([[1, 0], [1, 1]])
+       c = matrices.SparseMatrix([[5, 1,   2, 3], [12, 31, 94, 21], [134, 34, 5, 2], [3, 1, 1, 0]]) 
+       d = matrices.SparseMatrix([[-1,1],[-1,0]])
+
+       #tenorproduct of b,d
+       o1 =  [[-1, 1,  0, 0],\
+              [-1, 0,  0, 0],\
+              [-1, 1, -1, 1],\
+              [-1, 0, -1, 0]]
+       o1 = matrices.SparseMatrix(o1)
+
+       #o2 = tensorproduct of a,b
+       o2 =   [[1, 0, 0, 0, -1, 0, 0, 0], [1, 1, 0, 0, -1, -1, 0, 0], [-1, 0, 1, 0, \
+               1, 0, 0, 0], [-1, -1, 1, 1, 1, 1, 0, 0], [2, 0, 4, 0, -2, 0, 1,      \
+               0], [2, 2, 4, 4, -2, -2, 1, 1], [0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0,  \
+               0, 0, 0, 1, 1]]
+              
+       o2 = matrices.SparseMatrix(o2)
+
+       #tensor product of b,a
+       o3 =[[1, 0, -1, 0, 0, 0, 0, 0], [-1, 1, 1, 0, 0, 0, 0, 0], [2, 4, -2, 1, \
+            0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0], [1, 0, -1, 0, 1, 0, -1,      \
+            0], [-1, 1, 1, 0, -1, 1, 1, 0], [2, 4, -2, 1, 2, 4, -2, 1], [0, 0,  \
+            0, 1, 0, 0, 0, 1]]       
+       
+       
+       o3 = matrices.SparseMatrix(o3)
+
+       #Tensor product of a,c
+       o4 = [[5, 1, 2, 3, 0, 0, 0, 0, -5, -1, -2, -3, 0, 0, 0, 0], [12, 31, 94, \
+          21, 0, 0, 0, 0, -12, -31, -94, -21, 0, 0, 0, 0], [134, 34, 5, 2, 0,    \
+          0, 0, 0, -134, -34, -5, -2, 0, 0, 0, 0], [3, 1, 1, 0, 0, 0, 0,         \
+          0, -3, -1, -1, 0, 0, 0, 0, 0], [-5, -1, -2, -3, 5, 1, 2, 3, 5, 1, 2,   \
+           3, 0, 0, 0, 0], [-12, -31, -94, -21, 12, 31, 94, 21, 12, 31, 94,      \
+          21, 0, 0, 0, 0], [-134, -34, -5, -2, 134, 34, 5, 2, 134, 34, 5, 2,     \
+          0, 0, 0, 0], [-3, -1, -1, 0, 3, 1, 1, 0, 3, 1, 1, 0, 0, 0, 0,          \
+          0], [10, 2, 4, 6, 20, 4, 8, 12, -10, -2, -4, -6, 5, 1, 2, 3], [24,     \
+          62, 188, 42, 48, 124, 376, 84, -24, -62, -188, -42, 12, 31, 94,        \
+          21], [268, 68, 10, 4, 536, 136, 20, 8, -268, -68, -10, -4, 134, 34,    \
+          5, 2], [6, 2, 2, 0, 12, 4, 4, 0, -6, -2, -2, 0, 3, 1, 1, 0], [0, 0,    \
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1, 2, 3], [0, 0, 0, 0, 0, 0, 0, 0,    \
+          0, 0, 0, 0, 12, 31, 94, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,      \
+          134, 34, 5, 2], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 0]]
+       
+       o4 = matrices.SparseMatrix(o4)
+         
+       return a,b,c,d,o1,o2,o3,o4
+
+
+    def test_tensor_product(self):
+       a,b,c,d,o1,o2,o3,o4 = self.tensor_test_def()
+
+       # b tensor d 
+       assert b.tensor_product(d) == o1 
+       # a ten   b
+
+       assert a.tensor_product(b) == o2
+       # b teso  a 
+       assert b.tensor_product(a) == o3 
+       # a tens c
+       assert a.tensor_product(c) == o4 
 
     if __name__ == 'main':
 
