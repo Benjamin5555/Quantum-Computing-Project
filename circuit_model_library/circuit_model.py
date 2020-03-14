@@ -208,12 +208,15 @@ class QuantumCircuit(Gate):
                 
                 #Tensor product together the column in the list creates a gate spanning the
                 #quRegister
-                 
                 current_col = self._tensor_product_gates(gates_col)  
-                
+                print("CURRENT COLUMN")
+                print(current_col) 
+
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col) 
-                
+                print("OUTCIRCUIT")
+                print(out_circuit)
+
                 
                 
 

@@ -109,14 +109,32 @@ class TestGateKron(unittest.TestCase):
 
        
     def test_kron_over(self):
-        print("Kron over")
         a = (self.I.tensor_product(self.X)) 
-        assert (self.c.tensor_product(a)==circuit_model.Gate([[1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],\
-                                                              [0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 ],\
-                                                              [0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 ],\
-                                                              [0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 ],\
-                                                              [0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 ],\
-                                                              [0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 ],\
-                                                              [0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ],\
-                                                              [0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ]]))
-         
+        assert (self.c.tensor_product(a).matrix.A==circuit_model.Gate(\
+                                               [[1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],\
+                                                [0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 ],\
+                                                [0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 ],\
+                                                [0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 ],\
+                                                [0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 ],\
+                                                [0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 ],\
+                                                [0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ],\
+                                                [0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ]]).matrix.A).all()
+    
+    def test_circuit_with_bodge(self):
+        test_string = ["IcI",\
+                       "III",\
+                       "IXI"]
+
+        prod_circ = circuit_model.QuantumCircuit(test_string,self.gates_dictionary)
+        expected_matrix = csr_matrix([[1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],\
+                                      [0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 ],\
+                                      [0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 ],\
+                                      [0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 ],\
+                                      [0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 ],\
+                                      [0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 ],\
+                                      [0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ],\
+                                      [0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ]])
+
+        expc_circ = circuit_model.QuantumCircuit(expected_matrix)
+
+        assert (expc_circ.matrix.A == prod_circ.matrix.A).all()
