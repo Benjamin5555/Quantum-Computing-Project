@@ -40,33 +40,17 @@ class Gate(matrices.SquareMatrix):
         """An adapted tensor product to provide special behaviour in the case of control
         Might be better changing this to more variable identity size"""
         if(self.gate_id == 'c'):
-            return self._tensor_control_bodge(matrix)
-        
+            # self.special_kron(self,matrix)
+            sp_pr = super().tensor_product(matrix)
+            sp_pr[0][0] = np.dot(self.matrix[0][0],np.identity(matrix.matrix.shape()[0]))
+        #return self.dot(np.identity(2))
         elif( matrix.gate_id=='c'):
-            return self.dot(type(self)(np.identity(2)))#Needs to be changed to size of thing tens w\
+            return self.dot(np.identity(2))
         else:
             return super().tensor_product(matrix)
 
     
-    def _tensor_control_bodge(self,matrix):
-        """A workaround for adding controls to a gate suggested in:
-        algassert.com/impractical-experiments/2015/05/17/Treating-Controls-like-Values.html
-        This reduces the complexity of creation of circuits
-        """
-        sp_pr = super().tensor_product(matrix).matrix.A #Kron like normal and return matrix
-        #print(sp_pr)
-        #print("Dot result") #Dot the identity part to the correct segment as described
-        prod = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
-        #print(prod)
-        #print("slicing") #Replace the valid slice with the fudged result
-        arrlen = len(prod)
-        #arrlen = prod.shape[0]
-        #print(sp_pr[0:arrlen,0:arrlen])
-        #NEED To replace section with result of do product i.e. [[,],[,]] into bigger matrix
-        sp_pr[0:arrlen, 0:arrlen] = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
-        #print("sp_pr")
-        #print(sp_pr)
-        return type(self)(sp_pr) #Return a type-given result
+
 
 
 class QuantumRegister(matrices.Vector):
@@ -199,20 +183,21 @@ class QuantumCircuit(Gate):
         out_circuit = Gate(np.identity(dimensions))
             
 
-        for i in range(len(circuit_matrix_cols)): #For each column of gates...
-            gates_col = circuit_matrix_cols[i] 
+        for gates_col in circuit_matrix_cols: #For each column of gates...
             
             if(gates_col[0].shape[0] == 2): #For 2x2 case
-                
-                
-                
                 #Tensor product together the column in the list creates a gate spanning the
                 #quRegister
-                 
+                
                 current_col = self._tensor_product_gates(gates_col)  
                 
+                print("#######THING TO DOT WITH1#########")
+                print(current_col)
+                 
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col) 
+                print("#######EFFECT OF NEW GATE#########")
+                print(out_circuit)
                 
                 
                 

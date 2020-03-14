@@ -41,6 +41,8 @@ class TestCircuitModel(unittest.TestCase):
                             [0, 0, 0,-1]])
 
 
+    #Control top, controlled not gate
+    c = circuit_model.Gate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
     
     
     test_circuit_string_list = ["HXIH","IXHI"]
@@ -155,13 +157,13 @@ class TestCircuitModel(unittest.TestCase):
                 csr_matrix(\
                 [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]]))
 
-        gen_1 = circuit_model.QuantumCircuit(["IcI","HXH"],self.test_gates_dictionary)
+        gen_1 = circuit_model.QuantumCircuit(["IcI","HcH"],self.test_gates_dictionary)
 
         expected_2 = circuit_model.QuantumCircuit(\
                 csr_matrix(\
                 [[1/2, 1/2, 1/2, -(1/2)], [1/2, 1/2, -(1/2), 1/2], [1/2, -(1/2), 1/2,\
                 1/2], [-(1/2), 1/2, 1/2, 1/2]]))
-        gen_2 = circuit_model.QuantumCircuit(["HcH","IXI"],self.test_gates_dictionary)
+        gen_2 = circuit_model.QuantumCircuit(["HcH","IcI"],self.test_gates_dictionary)
 
 
 
@@ -227,12 +229,15 @@ class TestCircuitModel(unittest.TestCase):
 
 
     def test_grovers_c_01(self):
+        print("############################################################\n##################################################\n########################################")
         test_grovers_01 = ["HXcXHzcH",\
                            "HIzIHzzH"]
 
         circuit_Grover_01 = circuit_model.QuantumCircuit(test_grovers_01,\
-                                                         self.test_gates_dictionary)
+                                                          self.test_gates_dictionary)
         
+        print(circuit_Grover_01)
+        print("###########################PREASSERT")
         assert (np.around(circuit_Grover_01.matrix.A,4) == np.array([[0,  0, -1, 0],\
                                                       [1,  0,  0, 0],\
                                                       [0,  0,  0, 1],\
