@@ -1,8 +1,19 @@
+"""Provides basic tests for the circuit_model implementation specifically the `bodged' kronker 
+product
+
+.. todo:: 
+    * Requires improved documentation
+    * Requires more rigorus testing
+
+Author(s): 
+ * Benjamin Carpenter(s1731178@ed.ac.uk)
+"""
+
+
 import unittest
 from circuit_model_library import circuit_model 
 import numpy as np
 from scipy.sparse import csr_matrix
-import inspect
 
 
 
@@ -73,38 +84,12 @@ class TestGateKron(unittest.TestCase):
     
     
     def test_kron_control(self):
-        #print(self.c)
-        #print("#######################")
-        #print(self.z)
-        #print("#######################")
-        ##print(self.c.tensor_product(self.z))
-        ##print("#######################")
-        #print("########################")
-        #print("Expected")
-        #print(self.Z)
-        #print("#######################")
         assert self.c.tensor_product(self.z) == self.Z
 
 
     def test_kron_double_control(self):
-       #print("Tensor product")
        a = self.c.tensor_product(self.X) 
        assert a== self.N
-       #print("Relevant Test")
-       #print("#######################")
-       #print(self.c)
-       #print("#######################")
-       #print(self.X)
-       #print("#######Tensor prodcc###")
-       #print(self.c.tensor_product(self.c))
-       #print("#######Tensor prodcc x#")
-       #print(self.c.tensor_product(self.c).tensor_product(self.X))
-       #print("########################")
-       #print("Expected")
-       #print(self.T.matrix.A)
-       #print("#######################")
-       #print("Produced")
-       #print(self.c.tensor_product(a))
        assert (self.c.tensor_product(a).matrix.A==(self.T.matrix.A)).all() 
 
        
@@ -120,10 +105,10 @@ class TestGateKron(unittest.TestCase):
                                                 [0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ],\
                                                 [0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ]]).matrix.A).all()
     
-    def test_circuit_with_bodge(self):
-        test_string = ["IcI",\
-                       "III",\
-                       "IXI"]
+    def test_circuit_over_with_bodge(self):
+        test_string = ["c",\
+                       "I",\
+                       "X"]
 
         prod_circ = circuit_model.QuantumCircuit(test_string,self.gates_dictionary)
         expected_matrix = csr_matrix([[1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],\
@@ -138,3 +123,17 @@ class TestGateKron(unittest.TestCase):
         expc_circ = circuit_model.QuantumCircuit(expected_matrix)
 
         assert (expc_circ.matrix.A == prod_circ.matrix.A).all()
+
+    
+    def test_circuit_mult_contol_with_bodge(self):#Testing creating a Toffoli gate from components
+        test_string = ["c",\
+                       "c",\
+                       "X"]
+
+        prod_circ = circuit_model.QuantumCircuit(test_string,self.gates_dictionary)
+        
+        expc_circ = circuit_model.QuantumCircuit(["ITI","III","III"],self.gates_dictionary)
+
+        assert (expc_circ.matrix.A == prod_circ.matrix.A).all()
+
+    

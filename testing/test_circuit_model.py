@@ -1,6 +1,8 @@
 """Provides basic tests for the circuit_model implementation
 
 .. todo:: 
+    * Requires improved documentation
+    * Requires more rigorus testing
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -103,7 +105,7 @@ class TestCircuitModel(unittest.TestCase):
     def test_large_string(self):
         circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
         circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
-        test_register_00 = circuit_model.QuantumRegister([0],shape = (16,1))
+        test_register_00 = circuit_model.QuantumRegister([0],shape = (8,1))
         assert test_register_00 == circuit4.apply(test_register_00) #Will be equal due to XX = I 
 
 

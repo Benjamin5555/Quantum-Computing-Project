@@ -54,18 +54,9 @@ class Gate(matrices.SquareMatrix):
         This reduces the complexity of creation of circuits
         """
         sp_pr = super().tensor_product(matrix).matrix.A #Kron like normal and return matrix
-        #print(sp_pr)
-        #print("Dot result") #Dot the identity part to the correct segment as described
         prod = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
-        #print(prod)
-        #print("slicing") #Replace the valid slice with the fudged result
         arrlen = len(prod)
-        #arrlen = prod.shape[0]
-        #print(sp_pr[0:arrlen,0:arrlen])
-        #NEED To replace section with result of do product i.e. [[,],[,]] into bigger matrix
         sp_pr[0:arrlen, 0:arrlen] = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
-        #print("sp_pr")
-        #print(sp_pr)
         return type(self)(sp_pr) #Return a type-given result
 
 
@@ -197,7 +188,6 @@ class QuantumCircuit(Gate):
         #to dot everything with, Creates a gate spanning the quRegister
         dimensions = self._tensor_product_gates(circuit_matrix_cols[0]).shape[0]
         out_circuit = Gate(np.identity(dimensions))
-            
 
         for i in range(len(circuit_matrix_cols)): #For each column of gates...
             gates_col = circuit_matrix_cols[i] 
@@ -209,13 +199,9 @@ class QuantumCircuit(Gate):
                 #Tensor product together the column in the list creates a gate spanning the
                 #quRegister
                 current_col = self._tensor_product_gates(gates_col)  
-                print("CURRENT COLUMN")
-                print(current_col) 
-
+                
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col) 
-                print("OUTCIRCUIT")
-                print(out_circuit)
 
                 
                 
@@ -248,15 +234,17 @@ class QuantumCircuit(Gate):
         Returns: 
             The tensor product of the passed array of gates
         """
+        #We work in reverse so that controls will work properly
+          
 
         #Tensor product together the first two elelments of our 'column' so we have something to
         #work on with the for loop for the rest of the 'column'   
-        product = gates[0].tensor_product(gates[1]) 
-
+        
+        product = gates[len(gates)-2].tensor_product(gates[len(gates)-1]) 
         #Apply tensor product to rest of the 'column' (though only if there are more elements)
         if len(gates) > 2:
-            for gate in gates[2:]:
-                product = product.tensor_product(gate)
+            for gate in reversed(gates[:1]):#Where we have already considered the end 2 
+                product = gate.tensor_product(product)
         return product
 
     
