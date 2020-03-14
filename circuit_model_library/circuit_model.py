@@ -35,6 +35,30 @@ class Gate(matrices.SquareMatrix):
         #Call the parent class constructor after verifying valid parameters for a gate  
         self.gate_id = gate_id
         super().__init__(matrix)
+    
+    def tensor_product(self,matrix):
+        """An adapted tensor product to provide special behaviour in the case of control
+        Might be better changing this to more variable identity size"""
+        if(self.gate_id == 'c'):
+            return self._tensor_control_bodge(matrix)
+        
+        elif( matrix.gate_id=='c'):
+            return self.dot(type(self)(np.identity(2)))#Needs to be changed to size of thing tens w\
+        else:
+            return super().tensor_product(matrix)
+
+    
+    def _tensor_control_bodge(self,matrix):
+        """A workaround for adding controls to a gate suggested in:
+        algassert.com/impractical-experiments/2015/05/17/Treating-Controls-like-Values.html
+        This reduces the complexity of creation of circuits
+        """
+        sp_pr = super().tensor_product(matrix).matrix.A #Kron like normal and return matrix
+        prod = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
+        arrlen = len(prod)
+        sp_pr[0:arrlen, 0:arrlen] = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
+        return type(self)(sp_pr) #Return a type-given result
+
 
 class QuantumRegister(matrices.Vector):
     """A system of multiple qubits, abstractly the addition of multiple single qubits .
@@ -164,28 +188,25 @@ class QuantumCircuit(Gate):
         #to dot everything with, Creates a gate spanning the quRegister
         dimensions = self._tensor_product_gates(circuit_matrix_cols[0]).shape[0]
         out_circuit = Gate(np.identity(dimensions))
-            
 
-        for gates_col in circuit_matrix_cols: #For each column of gates...
+        for i in range(len(circuit_matrix_cols)): #For each column of gates...
+            gates_col = circuit_matrix_cols[i] 
             
             if(gates_col[0].shape[0] == 2): #For 2x2 case
+                
+                
+                
                 #Tensor product together the column in the list creates a gate spanning the
                 #quRegister
-                
                 current_col = self._tensor_product_gates(gates_col)  
-                
-                
-                
                 
                 #Dot the produced column to the circuit
                 out_circuit = out_circuit.dot(current_col) 
-            
-                
+
                 
                 
 
-            else:
-                
+            else:#Must check if is a control containing gate or not 
                 out_circuit = out_circuit.dot(gates_col[0])
         
         #Create a gate that will represent the circuit from the final product
@@ -203,7 +224,6 @@ class QuantumCircuit(Gate):
         """
         return self*quantum_register
     
-
     @staticmethod
     def _tensor_product_gates(gates):
         """Gets the tensor product of a list of gates
@@ -214,15 +234,17 @@ class QuantumCircuit(Gate):
         Returns: 
             The tensor product of the passed array of gates
         """
+        #We work in reverse so that controls will work properly
+          
 
         #Tensor product together the first two elelments of our 'column' so we have something to
         #work on with the for loop for the rest of the 'column'   
-        product = gates[0].tensor_product(gates[1]) 
-
+        
+        product = gates[len(gates)-2].tensor_product(gates[len(gates)-1]) 
         #Apply tensor product to rest of the 'column' (though only if there are more elements)
         if len(gates) > 2:
-            for gate in gates[2:]:
-                product = product.tensor_product(gate)
+            for gate in reversed(gates[:1]):#Where we have already considered the end 2 
+                product = gate.tensor_product(product)
         return product
 
     

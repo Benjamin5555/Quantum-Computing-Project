@@ -1,6 +1,8 @@
 """Provides basic tests for the circuit_model implementation
 
 .. todo:: 
+    * Requires improved documentation
+    * Requires more rigorus testing
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -32,14 +34,15 @@ class TestCircuitModel(unittest.TestCase):
     z = circuit_model.Gate([[1 ,0],\
                             [0 ,-1]])
 
+    c = circuit_model.Gate([[1,0],\
+                            [0,1]],"c")
+
     Z = circuit_model.Gate([[1, 0, 0, 0],\
                             [0, 1, 0, 0],\
                             [0, 0, 1, 0],\
                             [0, 0, 0,-1]])
 
 
-    #Control top, controlled not gate
-    c = circuit_model.Gate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
     
     
     test_circuit_string_list = ["HXIH","IXHI"]
@@ -102,7 +105,7 @@ class TestCircuitModel(unittest.TestCase):
     def test_large_string(self):
         circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
         circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
-        test_register_00 = circuit_model.QuantumRegister([0],shape = (16,1))
+        test_register_00 = circuit_model.QuantumRegister([0],shape = (8,1))
         assert test_register_00 == circuit4.apply(test_register_00) #Will be equal due to XX = I 
 
 
@@ -154,13 +157,13 @@ class TestCircuitModel(unittest.TestCase):
                 csr_matrix(\
                 [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]]))
 
-        gen_1 = circuit_model.QuantumCircuit(["IcI","HcH"],self.test_gates_dictionary)
+        gen_1 = circuit_model.QuantumCircuit(["IcI","HXH"],self.test_gates_dictionary)
 
         expected_2 = circuit_model.QuantumCircuit(\
                 csr_matrix(\
                 [[1/2, 1/2, 1/2, -(1/2)], [1/2, 1/2, -(1/2), 1/2], [1/2, -(1/2), 1/2,\
                 1/2], [-(1/2), 1/2, 1/2, 1/2]]))
-        gen_2 = circuit_model.QuantumCircuit(["HcH","IcI"],self.test_gates_dictionary)
+        gen_2 = circuit_model.QuantumCircuit(["HcH","IXI"],self.test_gates_dictionary)
 
 
 
@@ -209,32 +212,29 @@ class TestCircuitModel(unittest.TestCase):
        
 
     def test_grovers_c_00(self):
-        
-        test_grovers_00 = ["HXZXHzZH",\
-                           "HXZXHzZH"]
+        test_grovers_00 = ["HXcXHzcH",\
+                           "HXzXHzzH"]
 
         circuit_Grover_00 = circuit_model.QuantumCircuit(test_grovers_00,\
                                                           self.test_gates_dictionary)
- 
         assert (np.around(circuit_Grover_00.matrix.A,4) == np.array([[1,  0,  0,  0],\
                                                      [0,  0, -1,  0],\
                                                      [0, -1,  0,  0],\
                                                      [0,  0,  0, -1]])).all
-        
         qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
         out_register = circuit_Grover_00.apply(qu_reg_00)
-        assert out_register.measure()[0] == [0]
-        assert np.around(out_register.measure()[1],4) == [1]
+        assert (out_register.measure()[0] == [0]).all
+        assert (np.around(out_register.measure()[1],4) == [1]).all
 
 
 
     def test_grovers_c_01(self):
-        test_grovers_01 = ["HXZXHzZH",\
-                           "HIZIHzZH"]
+        test_grovers_01 = ["HXcXHzcH",\
+                           "HIzIHzzH"]
 
         circuit_Grover_01 = circuit_model.QuantumCircuit(test_grovers_01,\
-                                                          self.test_gates_dictionary)
-
+                                                         self.test_gates_dictionary)
+        
         assert (np.around(circuit_Grover_01.matrix.A,4) == np.array([[0,  0, -1, 0],\
                                                       [1,  0,  0, 0],\
                                                       [0,  0,  0, 1],\
