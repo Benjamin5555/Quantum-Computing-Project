@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.4" />
+<title>circuit_model_library.matrices API documentation</title>
+<meta name="description" content="Selection of classes that represent matricies and Vectors implemented using sparse matricies …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>circuit_model_library.matrices</code></h1>
+</header>
+<section id="section-intro">
+<p>Selection of classes that represent matricies and Vectors implemented using sparse matricies </p>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<ul>
+<li>General:<ul>
+<li>Testing required on all functions</li>
+<li>Improved error messages &amp; Error checking</li>
+<li>Formatting of latex in transpose method</li>
+</ul>
+</li>
+<li>SparseMatrix:<ul>
+<li>Support addition of a scalar value (i.e. scalar* identity matrix)</li>
+<li>Different way of accesing an element of a matrix i.e. more efficient methods
+also zero index?</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Author(s):
+* Benjamin Carpenter(s1731178@ed.ac.uk)</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Selection of classes that represent matricies and Vectors implemented using sparse matricies 
+
+
+.. todo::
+    * General:
+        * Testing required on all functions
+        * Improved error messages &amp; Error checking
+        * Formatting of latex in transpose method
+    * SparseMatrix:
+        * Support addition of a scalar value (i.e. scalar* identity matrix)
+        * Different way of accesing an element of a matrix i.e. more efficient methods 
+          also zero index?
+    
+Author(s):
+    * Benjamin Carpenter(s1731178@ed.ac.uk)
+
+&#34;&#34;&#34;
+from scipy.sparse import csc_matrix, csr_matrix, kron
+import numpy as np
+
+class SparseMatrix(object):
+    &#34;&#34;&#34;A general representation of a sparse matrix with common functionality for matrices:
+      Addition, subtraction, matrix multiplication and Equality checking 
+
+        Relies upon the scipy sparse module
+    Attributes:
+        matrix: The actual stored matrix
+    &#34;&#34;&#34;
+
+    def __init__(self, matrix):
+        #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
+        self.matrix = csr_matrix(matrix)
+        self.matrix.eliminate_zeros()
+        self.shape = self.matrix.shape
+        
+    def dot(self,matrix):
+        &#34;&#34;&#34;dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        &#34;&#34;&#34;
+        if (isinstance(matrix,SparseMatrix)):
+            return type(self)(self.matrix.dot(matrix.matrix))
+
+    def tensor_product(self,matrix):
+        &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: 
+            * Testing, better commenting and checking this is actually the correct operation
+            * Implement own tensor product function or explain how kron function works for report
+        &#34;&#34;&#34;
+        return type(self)(kron(self.matrix, matrix.matrix))
+
+
+    def __str__(self):
+        return str(np.array(self.matrix.toarray()))
+
+    def __getitem__(self, index):
+        return self.matrix.A[index]
+
+    def __add__(self,matrix):
+        &#34;&#34;&#34;
+        Args: 
+            matrix: The matrix to be added to the current matrix
+
+        Returns:
+            The addition of the two matrices
+        
+        Raises:
+            AssertionError: If the matrices are of an different size will raise an error
+
+        &#34;&#34;&#34;
+        assert np.shape(self.matrix) == np.shape(matrix.matrix) #Ensure valid operation 
+                                                                #i.e. same sized vectors 
+        return type(self)(self.matrix + matrix.matrix) #type(self) means if called from a vector 
+                                                       #child class will return a vector and not a
+                                                       #general matrix
+
+    def __sub__(self,matrix):
+        &#34;&#34;&#34;
+        Args: 
+            matrix: The matrix to be subtracted from the current matrix
+
+        Returns:
+            The subtraction of the two matrices
+        
+        Raises:
+            AssertionError: If the matrices are of an different size will raise an error
+
+        &#34;&#34;&#34;
+        assert np.shape(self.matrix) == np.shape(matrix.matrix) #Ensure valid operation 
+                                                                #i.e. same sized vectors 
+        return type(self)(self.matrix + (matrix.matrix*-1))#SEE __add__ for type(self) bit
+    
+    def __mul__(self,multiplier):
+        &#34;&#34;&#34;
+        Args:
+            multiplier: A scalar or matrix to multiply the current matrix by 
+
+        Returns:
+            The scalar or matrix multiple of the current matrix and multiplier
+        
+        Raises:
+
+
+        &#34;&#34;&#34;
+
+        if(isinstance(multiplier,SparseMatrix)):#Check if scalar or matrix multiplication valid
+            if(isinstance(multiplier,Vector)): #If is multiplied by vector-like object will be 
+                                               #(abstractly) a vector itself hence must return new 
+                                               #vector (else same type return)
+                return type(multiplier)(self.matrix*multiplier.matrix) 
+            else:
+                return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
+        else:
+            return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
+
+
+    def __eq__(self,matrix):
+        if(self.matrix.nnz == matrix.matrix.nnz and \
+           self.matrix.get_shape() == matrix.matrix.get_shape()): #Check number of items/shape is
+                                                                #the same as a quick initial check
+            if(type(self.matrix) != type(matrix.matrix)):
+                try:
+                    matrix = type(self)(matrix.matrix) #Allow for valid equivalence checking by 
+                                                       #casting the matrix to check equality with as
+                                                       #this type 
+                except:
+                    return False # Can assume that if the data cannot be cast then not equal
+            
+            # Can compare sorted components of the sparse array to check equal (also round data to 
+            # account for calculation errors)
+            return all(np.around(np.sort(self.matrix.data),4)==\
+                    np.around(np.sort(matrix.matrix.data),4))\
+                       and all(np.sort(self.matrix.indices) == np.sort(matrix.matrix.indices))\
+                       and all(np.sort(self.matrix.indptr)  == np.sort(matrix.matrix.indptr))
+                       #Compare wheter non zero elements have same data Not 100% sure sorting 
+                       #required, Probably also a more efficient method
+        else:
+            return False
+
+    def transpose(self):
+        &#34;&#34;&#34;
+        Returns:
+            Transpose of the given matrix \\(a_{ij}^T = a_{ji}\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.transpose())#SEE __add__ for type(self) bit
+        
+
+    def conjugate(self):
+        &#34;&#34;&#34;
+        Returns:
+            Conjugate matrix of the given matrix i.e. \\([a_{ij}]^*=[a^*_{ij}]\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.conjugate())#SEE __add__ for type(self) bit
+        
+
+    
+    def conjugate_transpose(self):
+        &#34;&#34;&#34;
+        Returns:
+            Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit
+    
+    def __pow__(self,exponent):
+        &#34;&#34;&#34;
+        Returns:
+            Original matrix raised to the argument power
+        &#34;&#34;&#34;
+        NotImplemented
+    
+class SquareMatrix(SparseMatrix):
+    &#34;&#34;&#34;Sparse square matrix that provides basic functionallity
+
+    Attributes:
+        matrix: A scipy sparse matrix storing data represented by matrix 
+    &#34;&#34;&#34;
+    def __init__(self,matrix):
+        &#34;&#34;&#34;Creates a sparse matrix of passed matrix 
+
+        Args:
+            matrix: Matrix i.e. 2D list, 2D numpy array, or (not implemented)sparse matrix of matrix
+        
+        Raises:
+            AssertionError: On recieving an incorrect shaped matrix (i.e. non 2D square matrix)
+        &#34;&#34;&#34;
+        if(isinstance(matrix,SparseMatrix)):
+            matrix = matrix.matrix # Can only construct from component matrix not from gates itself
+
+
+        assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
+        
+        
+        #assert not isinstance(matrix[0][0],list)          #Ensure only 2D list, 
+        #test doesn&#39;t work well with sparse martircies, consider different test or total removal 
+        super().__init__(matrix)
+
+class Vector(SparseMatrix): 
+    &#34;&#34;&#34;Vector (Row or column) representation that uses scipy sparse class  
+    
+    Attributes:
+        matrix: a sparse column vector containing the values of the vector
+        dimension: The number of dimensions represented within the vector
+        type: Whether the vector is a row or column (col) vector
+    &#34;&#34;&#34;
+
+    def __init__(self,matrix):
+        &#34;&#34;&#34;
+        Args:
+            matrix: A row (e.g. `[1,0,1,0]&#39; or column `[[1],[0],[1],[0]]&#39; formatted list-like object
+        Raises:
+            ValueError: On recieving invalid shaped list-like object
+
+
+        .. todo:: Override transpose and related functions to update &#39;type&#39; attribute
+        &#34;&#34;&#34;
+        shape = np.shape(matrix)
+         
+        if(len(shape) == 1):
+            self.type = &#34;row&#34;
+        
+        elif(shape[1]==1): #Ensure is either column or row vector 
+            self.type = &#34;col&#34;
+        else:
+            raise ValueError(&#34;Cannot construct a vector with shape &#34;,shape)
+        
+        self.matrix = csc_matrix(matrix)
+        self.matrix.eliminate_zeros()
+        self.dimension = np.shape(matrix)
+    
+    def __getitem__(self,index): 
+        if self.type == &#34;row&#34;:#Access is different depending on vector type
+            return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
+        else:
+            return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
+   
+    def __str__(self):
+        #Overides the base class as we do not want to print row vectors as [[1,2]] but just [1,2]
+        #Unless we do in which case remove
+        if(self.type == &#34;col&#34;):
+            return super().__str__()
+            #return str(np.array(self.matrix.toarray()))
+        else:
+            return str(np.array(self.matrix.toarray()[0]))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="circuit_model_library.matrices.SparseMatrix"><code class="flex name class">
+<span>class <span class="ident">SparseMatrix</span></span>
+<span>(</span><span>matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A general representation of a sparse matrix with common functionality for matrices:
+Addition, subtraction, matrix multiplication and Equality checking </p>
+<pre><code>Relies upon the scipy sparse module
+</code></pre>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>The actual stored matrix</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SparseMatrix(object):
+    &#34;&#34;&#34;A general representation of a sparse matrix with common functionality for matrices:
+      Addition, subtraction, matrix multiplication and Equality checking 
+
+        Relies upon the scipy sparse module
+    Attributes:
+        matrix: The actual stored matrix
+    &#34;&#34;&#34;
+
+    def __init__(self, matrix):
+        #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
+        self.matrix = csr_matrix(matrix)
+        self.matrix.eliminate_zeros()
+        self.shape = self.matrix.shape
+        
+    def dot(self,matrix):
+        &#34;&#34;&#34;dot/scalar product of two matrices
+
+        Args:
+            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+        Returns:
+            The dot (scalar) product of two matrices A and B
+        
+        Raises:
+            TypeError: on invalid maticie sizes 
+        &#34;&#34;&#34;
+        if (isinstance(matrix,SparseMatrix)):
+            return type(self)(self.matrix.dot(matrix.matrix))
+
+    def tensor_product(self,matrix):
+        &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+        returns the tensor product a specific case of the kronker product
+        Args:
+            matrix:A sparse matrix acting as the right hand side of the product
+
+        Returns:
+            A sparse matrix representation of self \\(\otimes\\) matrixB
+    
+        .. todo:: 
+            * Testing, better commenting and checking this is actually the correct operation
+            * Implement own tensor product function or explain how kron function works for report
+        &#34;&#34;&#34;
+        return type(self)(kron(self.matrix, matrix.matrix))
+
+
+    def __str__(self):
+        return str(np.array(self.matrix.toarray()))
+
+    def __getitem__(self, index):
+        return self.matrix.A[index]
+
+    def __add__(self,matrix):
+        &#34;&#34;&#34;
+        Args: 
+            matrix: The matrix to be added to the current matrix
+
+        Returns:
+            The addition of the two matrices
+        
+        Raises:
+            AssertionError: If the matrices are of an different size will raise an error
+
+        &#34;&#34;&#34;
+        assert np.shape(self.matrix) == np.shape(matrix.matrix) #Ensure valid operation 
+                                                                #i.e. same sized vectors 
+        return type(self)(self.matrix + matrix.matrix) #type(self) means if called from a vector 
+                                                       #child class will return a vector and not a
+                                                       #general matrix
+
+    def __sub__(self,matrix):
+        &#34;&#34;&#34;
+        Args: 
+            matrix: The matrix to be subtracted from the current matrix
+
+        Returns:
+            The subtraction of the two matrices
+        
+        Raises:
+            AssertionError: If the matrices are of an different size will raise an error
+
+        &#34;&#34;&#34;
+        assert np.shape(self.matrix) == np.shape(matrix.matrix) #Ensure valid operation 
+                                                                #i.e. same sized vectors 
+        return type(self)(self.matrix + (matrix.matrix*-1))#SEE __add__ for type(self) bit
+    
+    def __mul__(self,multiplier):
+        &#34;&#34;&#34;
+        Args:
+            multiplier: A scalar or matrix to multiply the current matrix by 
+
+        Returns:
+            The scalar or matrix multiple of the current matrix and multiplier
+        
+        Raises:
+
+
+        &#34;&#34;&#34;
+
+        if(isinstance(multiplier,SparseMatrix)):#Check if scalar or matrix multiplication valid
+            if(isinstance(multiplier,Vector)): #If is multiplied by vector-like object will be 
+                                               #(abstractly) a vector itself hence must return new 
+                                               #vector (else same type return)
+                return type(multiplier)(self.matrix*multiplier.matrix) 
+            else:
+                return type(self)(self.matrix*multiplier.matrix)#SEE __add__ for type(self) bit
+        else:
+            return type(self)(self.matrix.multiply(multiplier))#SEE __add__ for type(self) bit
+
+
+    def __eq__(self,matrix):
+        if(self.matrix.nnz == matrix.matrix.nnz and \
+           self.matrix.get_shape() == matrix.matrix.get_shape()): #Check number of items/shape is
+                                                                #the same as a quick initial check
+            if(type(self.matrix) != type(matrix.matrix)):
+                try:
+                    matrix = type(self)(matrix.matrix) #Allow for valid equivalence checking by 
+                                                       #casting the matrix to check equality with as
+                                                       #this type 
+                except:
+                    return False # Can assume that if the data cannot be cast then not equal
+            
+            # Can compare sorted components of the sparse array to check equal (also round data to 
+            # account for calculation errors)
+            return all(np.around(np.sort(self.matrix.data),4)==\
+                    np.around(np.sort(matrix.matrix.data),4))\
+                       and all(np.sort(self.matrix.indices) == np.sort(matrix.matrix.indices))\
+                       and all(np.sort(self.matrix.indptr)  == np.sort(matrix.matrix.indptr))
+                       #Compare wheter non zero elements have same data Not 100% sure sorting 
+                       #required, Probably also a more efficient method
+        else:
+            return False
+
+    def transpose(self):
+        &#34;&#34;&#34;
+        Returns:
+            Transpose of the given matrix \\(a_{ij}^T = a_{ji}\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.transpose())#SEE __add__ for type(self) bit
+        
+
+    def conjugate(self):
+        &#34;&#34;&#34;
+        Returns:
+            Conjugate matrix of the given matrix i.e. \\([a_{ij}]^*=[a^*_{ij}]\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.conjugate())#SEE __add__ for type(self) bit
+        
+
+    
+    def conjugate_transpose(self):
+        &#34;&#34;&#34;
+        Returns:
+            Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
+        &#34;&#34;&#34;
+        return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit
+    
+    def __pow__(self,exponent):
+        &#34;&#34;&#34;
+        Returns:
+            Original matrix raised to the argument power
+        &#34;&#34;&#34;
+        NotImplemented</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="circuit_model_library.matrices.SquareMatrix" href="#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></li>
+<li><a title="circuit_model_library.matrices.Vector" href="#circuit_model_library.matrices.Vector">Vector</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="circuit_model_library.matrices.SparseMatrix.conjugate"><code class="name flex">
+<span>def <span class="ident">conjugate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="returns">Returns</h2>
+<p>Conjugate matrix of the given matrix i.e. <span><span class="MathJax_Preview">[a_{ij}]^*=[a^*_{ij}]</span><script type="math/tex">[a_{ij}]^*=[a^*_{ij}]</script></span></p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def conjugate(self):
+    &#34;&#34;&#34;
+    Returns:
+        Conjugate matrix of the given matrix i.e. \\([a_{ij}]^*=[a^*_{ij}]\\)
+    &#34;&#34;&#34;
+    return type(self)(self.matrix.conjugate())#SEE __add__ for type(self) bit</code></pre>
+</details>
+</dd>
+<dt id="circuit_model_library.matrices.SparseMatrix.conjugate_transpose"><code class="name flex">
+<span>def <span class="ident">conjugate_transpose</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="returns">Returns</h2>
+<p>Conjugate transpose of the given matrix i.e. <span><span class="MathJax_Preview">([a_{ij}]^*)^T = a^*_{ji}</span><script type="math/tex">([a_{ij}]^*)^T = a^*_{ji}</script></span></p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def conjugate_transpose(self):
+    &#34;&#34;&#34;
+    Returns:
+        Conjugate transpose of the given matrix i.e. \\(([a_{ij}]^*)^T = a^*_{ji}\\)
+    &#34;&#34;&#34;
+    return type(self)(self.matrix.conjugate().transpose()) #SEE __add__ for type(self) bit</code></pre>
+</details>
+</dd>
+<dt id="circuit_model_library.matrices.SparseMatrix.dot"><code class="name flex">
+<span>def <span class="ident">dot</span></span>(<span>self, matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>dot/scalar product of two matrices</p>
+<h2 id="args">Args</h2>
+<p>matrix:A matrix, the same dimensions as the current matrix that will to be dotted with</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>The</code> <code>dot</code> (<code>scalar</code>) <code>product</code> of <code>two</code> <code>matrices</code> <code>A</code> <code>and</code> <code>B</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>TypeError</code></strong></dt>
+<dd>on invalid maticie sizes</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dot(self,matrix):
+    &#34;&#34;&#34;dot/scalar product of two matrices
+
+    Args:
+        matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+    Returns:
+        The dot (scalar) product of two matrices A and B
+    
+    Raises:
+        TypeError: on invalid maticie sizes 
+    &#34;&#34;&#34;
+    if (isinstance(matrix,SparseMatrix)):
+        return type(self)(self.matrix.dot(matrix.matrix))</code></pre>
+</details>
+</dd>
+<dt id="circuit_model_library.matrices.SparseMatrix.tensor_product"><code class="name flex">
+<span>def <span class="ident">tensor_product</span></span>(<span>self, matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the kronker product of this
+matrix with another, when applied to a vector
+returns the tensor product a specific case of the kronker product</p>
+<h2 id="args">Args</h2>
+<p>matrix:A sparse matrix acting as the right hand side of the product</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>A</code> <code>sparse</code> <code>matrix</code> <code>representation</code> of <code>self</code> (`otimes<code>\)</code>matrixB`</dt>
+<dd>&nbsp;</dd>
+</dl>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<ul>
+<li>Testing, better commenting and checking this is actually the correct operation</li>
+<li>Implement own tensor product function or explain how kron function works for report</li>
+</ul>
+</div></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tensor_product(self,matrix):
+    &#34;&#34;&#34;Returns the kronker product of this  matrix with another, when applied to a vector 
+    returns the tensor product a specific case of the kronker product
+    Args:
+        matrix:A sparse matrix acting as the right hand side of the product
+
+    Returns:
+        A sparse matrix representation of self \\(\otimes\\) matrixB
+
+    .. todo:: 
+        * Testing, better commenting and checking this is actually the correct operation
+        * Implement own tensor product function or explain how kron function works for report
+    &#34;&#34;&#34;
+    return type(self)(kron(self.matrix, matrix.matrix))</code></pre>
+</details>
+</dd>
+<dt id="circuit_model_library.matrices.SparseMatrix.transpose"><code class="name flex">
+<span>def <span class="ident">transpose</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Transpose</code> of <code>the</code> <code>given</code> <code>matrix</code> <span><span class="MathJax_Preview"><code>a_</code>{{<code>ij</code>}^}^<code>T</code> =
+= <code>a_</code>{{<code>ji</code>}}</span><script type="math/tex"><code>a_</code>{{<code>ij</code>}^}^<code>T</code> =
+= <code>a_</code>{{<code>ji</code>}}</script></span></dt>
+<dd>&nbsp;</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def transpose(self):
+    &#34;&#34;&#34;
+    Returns:
+        Transpose of the given matrix \\(a_{ij}^T = a_{ji}\\)
+    &#34;&#34;&#34;
+    return type(self)(self.matrix.transpose())#SEE __add__ for type(self) bit</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="circuit_model_library.matrices.SquareMatrix"><code class="flex name class">
+<span>class <span class="ident">SquareMatrix</span></span>
+<span>(</span><span>matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Sparse square matrix that provides basic functionallity</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>A scipy sparse matrix storing data represented by matrix </dd>
+</dl>
+<p>Creates a sparse matrix of passed matrix </p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>Matrix i.e. 2D list, 2D numpy array, or (not implemented)sparse matrix of matrix</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>AssertionError</code></strong></dt>
+<dd>On recieving an incorrect shaped matrix (i.e. non 2D square matrix)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SquareMatrix(SparseMatrix):
+    &#34;&#34;&#34;Sparse square matrix that provides basic functionallity
+
+    Attributes:
+        matrix: A scipy sparse matrix storing data represented by matrix 
+    &#34;&#34;&#34;
+    def __init__(self,matrix):
+        &#34;&#34;&#34;Creates a sparse matrix of passed matrix 
+
+        Args:
+            matrix: Matrix i.e. 2D list, 2D numpy array, or (not implemented)sparse matrix of matrix
+        
+        Raises:
+            AssertionError: On recieving an incorrect shaped matrix (i.e. non 2D square matrix)
+        &#34;&#34;&#34;
+        if(isinstance(matrix,SparseMatrix)):
+            matrix = matrix.matrix # Can only construct from component matrix not from gates itself
+
+
+        assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
+        
+        
+        #assert not isinstance(matrix[0][0],list)          #Ensure only 2D list, 
+        #test doesn&#39;t work well with sparse martircies, consider different test or total removal 
+        super().__init__(matrix)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="circuit_model_library.circuit_model.Gate" href="circuit_model.html#circuit_model_library.circuit_model.Gate">Gate</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></b></code>:
+<ul class="hlist">
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.dot" href="#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.tensor_product" href="#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="circuit_model_library.matrices.Vector"><code class="flex name class">
+<span>class <span class="ident">Vector</span></span>
+<span>(</span><span>matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Vector (Row or column) representation that uses scipy sparse class
+</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>a sparse column vector containing the values of the vector</dd>
+<dt><strong><code>dimension</code></strong></dt>
+<dd>The number of dimensions represented within the vector</dd>
+<dt><strong><code>type</code></strong></dt>
+<dd>Whether the vector is a row or column (col) vector</dd>
+</dl>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>matrix</code></strong></dt>
+<dd>A row (e.g. <code>[1,0,1,0]' or column</code>[[1],[0],[1],[0]]' formatted list-like object</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>On recieving invalid shaped list-like object</dd>
+</dl>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<p>Override transpose and related functions to update 'type' attribute</p>
+</div></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Vector(SparseMatrix): 
+    &#34;&#34;&#34;Vector (Row or column) representation that uses scipy sparse class  
+    
+    Attributes:
+        matrix: a sparse column vector containing the values of the vector
+        dimension: The number of dimensions represented within the vector
+        type: Whether the vector is a row or column (col) vector
+    &#34;&#34;&#34;
+
+    def __init__(self,matrix):
+        &#34;&#34;&#34;
+        Args:
+            matrix: A row (e.g. `[1,0,1,0]&#39; or column `[[1],[0],[1],[0]]&#39; formatted list-like object
+        Raises:
+            ValueError: On recieving invalid shaped list-like object
+
+
+        .. todo:: Override transpose and related functions to update &#39;type&#39; attribute
+        &#34;&#34;&#34;
+        shape = np.shape(matrix)
+         
+        if(len(shape) == 1):
+            self.type = &#34;row&#34;
+        
+        elif(shape[1]==1): #Ensure is either column or row vector 
+            self.type = &#34;col&#34;
+        else:
+            raise ValueError(&#34;Cannot construct a vector with shape &#34;,shape)
+        
+        self.matrix = csc_matrix(matrix)
+        self.matrix.eliminate_zeros()
+        self.dimension = np.shape(matrix)
+    
+    def __getitem__(self,index): 
+        if self.type == &#34;row&#34;:#Access is different depending on vector type
+            return self.matrix.A[0][index] #matrix stores as [[1,2,3,4]] so we do [0] first
+        else:
+            return self.matrix.A[index][0] #matrix stored as [[1],[2],[5]] so we do [0] second
+   
+    def __str__(self):
+        #Overides the base class as we do not want to print row vectors as [[1,2]] but just [1,2]
+        #Unless we do in which case remove
+        if(self.type == &#34;col&#34;):
+            return super().__str__()
+            #return str(np.array(self.matrix.toarray()))
+        else:
+            return str(np.array(self.matrix.toarray()[0]))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="circuit_model_library.circuit_model.QuantumRegister" href="circuit_model.html#circuit_model_library.circuit_model.QuantumRegister">QuantumRegister</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></b></code>:
+<ul class="hlist">
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.dot" href="#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.tensor_product" href="#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="circuit_model_library" href="index.html">circuit_model_library</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="circuit_model_library.matrices.SparseMatrix" href="#circuit_model_library.matrices.SparseMatrix">SparseMatrix</a></code></h4>
+<ul class="">
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate" href="#circuit_model_library.matrices.SparseMatrix.conjugate">conjugate</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.conjugate_transpose" href="#circuit_model_library.matrices.SparseMatrix.conjugate_transpose">conjugate_transpose</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.dot" href="#circuit_model_library.matrices.SparseMatrix.dot">dot</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.tensor_product" href="#circuit_model_library.matrices.SparseMatrix.tensor_product">tensor_product</a></code></li>
+<li><code><a title="circuit_model_library.matrices.SparseMatrix.transpose" href="#circuit_model_library.matrices.SparseMatrix.transpose">transpose</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="circuit_model_library.matrices.SquareMatrix" href="#circuit_model_library.matrices.SquareMatrix">SquareMatrix</a></code></h4>
+</li>
+<li>
+<h4><code><a title="circuit_model_library.matrices.Vector" href="#circuit_model_library.matrices.Vector">Vector</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
