@@ -6,6 +6,7 @@
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
+ * Gregor Rowley (s1705159@ed.ac.uk)
 """
 
 import unittest
@@ -19,24 +20,30 @@ import inspect
 
 class TestCircuitModel(unittest.TestCase):
     """
-
+    Tests for circuit_model.
     """
+    # Quantum logic gates, represented by matrices:
 
+    # Hadamard gate:
     H = circuit_model.Gate(2**(-1/2) * np.array([[1,  1],\
                                                  [1, -1]]))
-                                                            
+
+    # Negation/Pauli-X gate:
     N = circuit_model.Gate([[0, 1],\
                             [1, 0]])                        
-                                                            
+
+    # Identity gate:                                               
     I = circuit_model.Gate([[1, 0],\
                             [0, 1]])
     
+    # Pauli-Z gate:
     z = circuit_model.Gate([[1 ,0],\
                             [0 ,-1]])
 
     c = circuit_model.Gate([[1,0],\
                             [0,1]],"c")
 
+    # Controlled Z (CZ) gate:
     Z = circuit_model.Gate([[1, 0, 0, 0],\
                             [0, 1, 0, 0],\
                             [0, 0, 1, 0],\
@@ -44,8 +51,9 @@ class TestCircuitModel(unittest.TestCase):
 
 
     
-    
+    # List of string's representing gate combinations:
     test_circuit_string_list = ["HXIH","IXHI"]
+    # Dictionary of gate ID's:
     test_gates_dictionary = {"I":I,\
                              "H":H,\
                              "X":N,\
@@ -55,6 +63,10 @@ class TestCircuitModel(unittest.TestCase):
     
     
     def __setup_test(self):
+        """
+        Sets up the quantum registers and gate combinations strings
+        required for testing.
+        """
         test_register_01 = circuit_model.QuantumRegister([1],shape = (4,1))
         test_circuit_not_not_string = ["XXI","XIX"]
         circuit2 = circuit_model.QuantumCircuit(test_circuit_not_not_string, self.test_gates_dictionary)
@@ -62,13 +74,19 @@ class TestCircuitModel(unittest.TestCase):
 
 
     def test_run_circuit(self):
+        """
+        Tests the register instantiated in the __setup_test method,
+        applied to the NOT NOT circuit combination, also defined above,
+        to ensure that it returns the original register, since the double 
+        negative of the two NOT gates should produce no result.
+        """
         register, not_not_circuit = self.__setup_test()
         assert not_not_circuit*register == register
         
 
     def test_quantum_register_creation(self):
         """
-
+        Creates the test register required for further tests below.
         """
         test_register = circuit_model.QuantumRegister([0,1,4,9],shape = (12,1))
 
@@ -76,7 +94,7 @@ class TestCircuitModel(unittest.TestCase):
 
     def test_quantum_circuit_creation(self):
         """
-
+        Tests that quantum circuits return the expected output.
         """
         
         
@@ -103,6 +121,9 @@ class TestCircuitModel(unittest.TestCase):
 
         
     def test_large_string(self):
+        """
+        
+        """
         circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
         circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
         test_register_00 = circuit_model.QuantumRegister([0],shape = (8,1))
