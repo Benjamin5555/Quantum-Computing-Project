@@ -122,7 +122,8 @@ class TestCircuitModel(unittest.TestCase):
         
     def test_large_string(self):
         """
-        
+        Tests a large string, i.e. combination of quantum logic gates, ensuring
+        that it matches the expected contents and shape.
         """
         circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
         circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
@@ -171,6 +172,10 @@ class TestCircuitModel(unittest.TestCase):
        
 
     def basic_circuit_creation_definitions(self):
+        """
+        Creates the Quantum Registers and Quantum Circuits which are required,
+        for testing circuit creation.
+        """
         qu_reg_00 = circuit_model.QuantumRegister([0],(4,1))
         qu_reg_10 = circuit_model.QuantumRegister([2],(4,1))
 
@@ -191,12 +196,19 @@ class TestCircuitModel(unittest.TestCase):
         return qu_reg_00,qu_reg_10,expected_1,gen_1,expected_2,gen_2
 
     def test_basic_circuit_creation(self):
+        """
+        Tests the creation of basic quantum circuits, checking that they match
+        the expected results.
+        """
         qu_reg_00,qu_reg_10,expected_1,gen_1,*_= self.basic_circuit_creation_definitions()
         assert (expected_1 == gen_1)
 
 
     def test_intermediate_circuit_Application(self):
-
+        """
+        Tests the application of quantum circuits ensuring the states and 
+        lengths match expected results.
+        """"
         qu_reg_00,qu_reg_10,expected_1,gen_1,expected_2,gen_2 =\
                 self.basic_circuit_creation_definitions()
         #EFFECTIVELY AN IDENTITY MATRIX
@@ -233,6 +245,10 @@ class TestCircuitModel(unittest.TestCase):
        
 
     def test_grovers_c_00(self):
+        """
+        Tests Grover's algorithm with register 00, ensuring the quantum register 
+        matches expected results, after Grover's algorithm has been applied.
+        """
         test_grovers_00 = ["HXcXHzcH",\
                            "HXzXHzzH"]
 
@@ -250,6 +266,10 @@ class TestCircuitModel(unittest.TestCase):
 
 
     def test_grovers_c_01(self):
+        """
+        Tests Grover's algorithm with register 01, ensuring the quantum register 
+        matches expected results, after Grover's algorithm has been applied.
+        """
         test_grovers_01 = ["HXcXHzcH",\
                            "HIzIHzzH"]
 
@@ -267,6 +287,11 @@ class TestCircuitModel(unittest.TestCase):
         assert np.around(out_register.measure()[1],4) == [1]
 
     def test_grovers_c_10(self):
+        """
+        Tests Grover's algorithm with register 10, ensuring the quantum 
+        register matches expected results, after Grover's algorithm has been 
+        applied.
+        """
         test_grovers_10 = ["HIZIHzZH",\
                            "HXZXHzZH"]
 
@@ -286,7 +311,11 @@ class TestCircuitModel(unittest.TestCase):
         assert np.around(out_register.measure()[1],4) == [1]
 
     def test_grovers_c_11(self):            
-        
+        """
+        Tests Grover's algorithm with register 11, ensuring the quantum 
+        register matches expected results, after Grover's algorithm has been 
+        applied.
+        """
         test_grovers_11 = ["HIZIHzZH",\
                            "HIZIHzZH"]
 
