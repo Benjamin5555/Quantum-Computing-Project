@@ -208,7 +208,7 @@ class TestCircuitModel(unittest.TestCase):
         """
         Tests the application of quantum circuits ensuring the states and 
         lengths match expected results.
-        """"
+        """
         qu_reg_00,qu_reg_10,expected_1,gen_1,expected_2,gen_2 =\
                 self.basic_circuit_creation_definitions()
         #EFFECTIVELY AN IDENTITY MATRIX

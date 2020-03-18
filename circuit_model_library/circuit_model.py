@@ -243,7 +243,7 @@ class QuantumCircuit(Gate):
         product = gates[len(gates)-2].tensor_product(gates[len(gates)-1]) 
         #Apply tensor product to rest of the 'column' (though only if there are more elements)
         if len(gates) > 2:
-            for gate in reversed(gates[:1]):#Where we have already considered the end 2 
+            for gate in reversed(gates[:len(gates)-2]):#Where we have already considered the end 2 
                 product = gate.tensor_product(product)
         return product
 
