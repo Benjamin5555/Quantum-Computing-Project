@@ -164,7 +164,7 @@ class SparseMatrix(object):
     def transpose(self):
         """
         Returns:
-            Transpose of the given matrix \\(a_{ij}^T = a_{ji}\\)
+            Transpose of the given matrix
         """
         return type(self)(self.matrix.transpose())#SEE __add__ for type(self) bit
         

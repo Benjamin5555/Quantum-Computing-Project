@@ -1,10 +1,15 @@
 """This module details the main and specific functionality of the circuit model including 
 a functionality that will 'run' a circuit
 .. todo::
-    *Control bodge only works for specific structures (see merge request #8)
-    *Add a normalisation method to quantum register and apply it at the creation of a circuit
-    *Add constraints on the matrices used in Gate constructor
-    *Add Error handelling code and detailed error messages
+    * Control bodge only works for specific structures (see merge request #8)
+    * Add a normalisation method to quantum register and apply it at the creation of a circuit
+    * Add constraints on the matrices used in Gate constructor
+    * Add Error handlling code and detailed error messages
+    * Consider moving the apply method from QuantumCircuit to its parent Gate class a realistically\
+    a gate could be applied to a qubit and would be more cohesive
+    * Change QuantumRegisters constructor to take the number of qubits rather than shape for simpler\
+    functionality
+
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
 """
@@ -69,7 +74,7 @@ class Gate(matrices.SquareMatrix):
 
 
 class QuantumRegister(matrices.Vector):
-    """A system of multiple qubits, abstractly the addition of multiple single qubits .
+    """A system of multiple qubits, abstractly the tensor product of multiple single qubits.
     Attributes:
         register: vector representing the qubit state 
     
@@ -86,6 +91,7 @@ class QuantumRegister(matrices.Vector):
                 Or
                 A sparse matrix that represents a quantum register (e.g. as the result of a 
                 computation) 
+            shape: The shape of the quantum register (i.e. 2^n,1 where n is the number of qubits)
         """
         if isinstance(register_initial_state, scipy.sparse.spmatrix):
             #Case where an existing sparse matrix is passed we can simply genearate from this 
