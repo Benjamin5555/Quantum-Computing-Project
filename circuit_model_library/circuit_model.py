@@ -1,8 +1,14 @@
 """This module details the main and specific functionality of the circuit model including 
 a functionality that will 'run' a circuit
 .. todo::
-    * Implementation of gate given a decision on exactly how it will be called/used
-    * Current quantum circuit implementation will only work for 2x2 matricies
+    * Control bodge only works for specific structures (see merge request #8)
+    * Add a normalisation method to quantum register and apply it at the creation of a circuit
+    * Add constraints on the matrices used in Gate constructor
+    * Add Error handlling code and detailed error messages
+    * Consider moving the apply method from QuantumCircuit to its parent Gate class a realistically\
+    a gate could be applied to a qubit and would be more cohesive
+    * Change QuantumRegisters constructor to take the number of qubits rather than shape for simpler\
+    functionality
 
 Author(s): 
  * Benjamin Carpenter(s1731178@ed.ac.uk)
@@ -16,20 +22,17 @@ import numpy as np
 class Gate(matrices.SquareMatrix):
     """A class to implement gates, will share a large amount of functionality with a square matrix
     but will require have a more specific criteria for what form a matrix can take as well as
-    likely requirng additional functionality
+    requirng additional functionality for some operations (the tensor product)
     
     Attributes:
-        gate_id: A unique identifier of the type of gate that the instance is
-        matrix: A matrix representing the operation of the gate
+        matrix: A hermatian matrix representing an operation on a qubit
+        gate_id:A character used to identifiy the gate
+    Raises:
+        ValueError: On constructor argument being invalid i.e. non-hermatian matrix
     .. todo::
         *Add verification so actual constraints on what a gate can be are observed (i.e. unitary)
     """
-    def __init__(self, matrix, gate_id=None):
-        """Creates a gate object
-        Args:
-        Raises:
-            ValueError: On invalid form for a Quantum circuit gate
-        """
+    def __init__(self, matrix, gate_id=None): 
         #assert Hermatian, other requirments for a gate here
 
         #Call the parent class constructor after verifying valid parameters for a gate  
@@ -37,14 +40,18 @@ class Gate(matrices.SquareMatrix):
         super().__init__(matrix)
     
     def tensor_product(self,matrix):
-        """An adapted tensor product to provide special behaviour in the case of control
-        Might be better changing this to more variable identity size"""
-        if(self.gate_id == 'c'):
-            return self._tensor_control_bodge(matrix)
+        """An adapted tensor product to provide special behaviour in the case of control in a form 
+        similar to 
+        .. image:: tensor_bodge.png
         
-        elif( matrix.gate_id=='c'):
-            return self.dot(type(self)(np.identity(2)))#Needs to be changed to size of thing tens w\
-        else:
+        with any number of qubits stradling any number of qubits. Special behaviour performed
+        in _tensor_control_bodge suggested in:
+        algassert.com/impractical-experiments/2015/05/17/Treating-Controls-like-Values.html
+        This reduces the complexity of creation of circuits
+        """
+        if(self.gate_id == 'c'): #If the gates being combined involve a control gate
+            return self._tensor_control_bodge(matrix)
+        else:#For non control gates use parent tensor_product functionality
             return super().tensor_product(matrix)
 
     
@@ -54,17 +61,27 @@ class Gate(matrices.SquareMatrix):
         This reduces the complexity of creation of circuits
         """
         sp_pr = super().tensor_product(matrix).matrix.A #Kron like normal and return matrix
-        prod = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
+        prod = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))#Dot top leftmost 
+                #component of matrix with identity matrix 
+
+                
         arrlen = len(prod)
+        #Find the length of the 'custom' array (above) and replace the top leftmost component with
+        #the 'custom part' that has been created (below)
+
         sp_pr[0:arrlen, 0:arrlen] = np.dot(self.matrix.A[0][0],np.identity(matrix.matrix.shape[0]))
         return type(self)(sp_pr) #Return a type-given result
 
 
 class QuantumRegister(matrices.Vector):
-    """A system of multiple qubits, abstractly the addition of multiple single qubits .
+    """A system of multiple qubits, abstractly the tensor product of multiple single qubits.
     Attributes:
         register: vector representing the qubit state 
     
+
+    .. todo::
+        *Add a normalisation method that is applied at the start so that a more complex 
+        register can be input
     """
     def __init__(self, register_initial_state, shape=None):
         """Initialise a quantum register with specific values
@@ -74,8 +91,7 @@ class QuantumRegister(matrices.Vector):
                 Or
                 A sparse matrix that represents a quantum register (e.g. as the result of a 
                 computation) 
-        
-
+            shape: The shape of the quantum register (i.e. 2^n,1 where n is the number of qubits)
         """
         if isinstance(register_initial_state, scipy.sparse.spmatrix):
             #Case where an existing sparse matrix is passed we can simply genearate from this 
@@ -100,24 +116,27 @@ class QuantumRegister(matrices.Vector):
 
     def measure(self):
         """Measures the register, returning the possible state values and probability of different
-        output bit values
+        output state values
 
         'Possible state values' relates to the value represented by the qubits (or now just bits as 
         any superposition is collapsed on measurments) e.g. |11> has a 'state value' of 3
+        Only works to measure a ket (column) vector  the default shape of a quantum register
 
         Returns:
             A 2D list of possible values and their probabilities 
-            i.e. [[Possible values],[Related Probability]]
+            i.e. [[Possible values],[Related Probabilities]] where the value at an index i in the 
+            values list has the probability at the same index in the probabilities list
         Raises:
-
+            AssertionError: Where the function is called on a quantum register bra state 
         """
-        #Because of how csc_matrix stores data, the values and poisitive bit posiotions are given 
-        #simply by the indicies and data attributes, where the indices value represents a Qbit 
-        #e.g. if the indice is 5 its equivalent to = |101>  and the probability is given by
-        #the value in the data attribute squared hence
+        #Because of how csc_matrix stores data, the values and positive qubit posiotions are given 
+        #simply by the indicies and data attributes of our matrix, where the indices value 
+        #represents a Qbit e.g. if the indice is 5 its equivalent to = |101>  and the probability is
+        #given by the value in the data attribute squared hence
         if(self.dimension[0]>self.dimension[1]): #Only works in case of column vector 
-            return [self.matrix.indices,self.matrix.data**2]
-            
+            #Simply return the lists (must square index list for probabilities)
+            return [self.matrix.indices,self.matrix.data**2] 
+        raise AssertionError("Invalid quantum register state")
 
             
 
@@ -215,7 +234,7 @@ class QuantumCircuit(Gate):
    
     def apply(self,quantum_register):
         """Applies the quantum circuit to a register and returns the superposition quantum register
-
+        Makes use of the fact that we can simply mulitply a gate by a circuit to apply it
         Args:
             quantum_register: The register representing the start state of the circuit
 
@@ -235,7 +254,6 @@ class QuantumCircuit(Gate):
             The tensor product of the passed array of gates
         """
         #We work in reverse so that controls will work properly
-          
 
         #Tensor product together the first two elelments of our 'column' so we have something to
         #work on with the for loop for the rest of the 'column'   
