@@ -42,19 +42,6 @@ class TestSquareMatrixImp(unittest.TestCase):
         assert testSqMatrixB[3][2]==0
 
 
-    def test_SquareMatrix_basic_operations(self):
-        testSqMatrixA, testSqMatrixB, mc, mc2 = self.create_SquareMatrix()
-        a = testSqMatrixA + testSqMatrixB
-        b = matrices.SquareMatrix(mc+mc2)
-        assert (testSqMatrixA + testSqMatrixB) == matrices.SquareMatrix(mc+mc2)
-        assert (testSqMatrixA - testSqMatrixB) == matrices.SquareMatrix(mc-mc2)
-       
-        tp = (testSqMatrixA * testSqMatrixB)
-        tx = matrices.SquareMatrix(np.matmul(mc,mc2))
-        
-        assert (testSqMatrixA * testSqMatrixB) == matrices.SquareMatrix(np.matmul(mc,mc2))
-        assert isinstance((testSqMatrixA + testSqMatrixB),matrices.SquareMatrix) 
-
     def test_SquareMatrix_conjugate_transpose(self):
 
         hermatian_matrix = matrices.SquareMatrix([[   2, 2+1j,  4],\

@@ -92,46 +92,6 @@ class TestCircuitModel(unittest.TestCase):
 
 
 
-    def test_quantum_circuit_creation(self):
-        """
-        Tests that quantum circuits return the expected output.
-        """
-        
-        
-        circuit1 = circuit_model.QuantumCircuit(self.test_circuit_string_list, self.test_gates_dictionary)
-        test_circuit_not_string = ["XXI","XIX"]
-        
-        
-        
-        circuit2 = circuit_model.QuantumCircuit(test_circuit_not_string, self.test_gates_dictionary)
-        #Should return identity matrix
-
-        assert (circuit2.matrix.A == (np.array([[1,0,0,0],\
-                                                [0,1,0,0],\
-                                                [0,0,1,0],\
-                                                [0,0,0,1]]))).all()
-        circuit_string3 = ["HI","IX"]
-        circuit3 =circuit_model.QuantumCircuit(circuit_string3  , self.test_gates_dictionary)
-        circuit3Expected = circuit_model.QuantumCircuit([[0, 1/np.sqrt(2), 0, 1/np.sqrt(2)   ],\
-                                                       [1/np.sqrt(2), 0, 1/np.sqrt(2), 0   ],\
-                                                       [0, 1/np.sqrt(2), 0, -(1/np.sqrt(2))],\
-                                                       [1/np.sqrt(2), 0, -(1/np.sqrt(2)), 0]])
-
-        assert circuit3== circuit3Expected
-
-        
-    def test_large_string(self):
-        """
-        Tests a large string, i.e. combination of quantum logic gates, ensuring
-        that it matches the expected contents and shape.
-        """
-        circuit_string4 = test_circuit_not_string = ["XXI","XIX","IXX","IXX"]
-        circuit4 =circuit_model.QuantumCircuit(circuit_string4  , self.test_gates_dictionary)
-        test_register_00 = circuit_model.QuantumRegister([0],shape = (8,1))
-        assert test_register_00 == circuit4.apply(test_register_00) #Will be equal due to XX = I 
-
-
-
     def test_Hadamard_run(self):
         """
             Tests that the simulated  'circuit' process works for most basic gate i.e. Hadamard

@@ -6,6 +6,7 @@
         * Testing required on all functions
         * Improved error messages & Error checking
         * Formatting of latex in transpose method
+        * Compare different sparse matrix implementations to see which might be quicker
     * SparseMatrix:
         * Support addition of a scalar value (i.e. scalar* identity matrix)
         * Different way of accesing an element of a matrix i.e. more efficient methods 
@@ -24,25 +25,25 @@ class SparseMatrix(object):
 
         Relies upon the scipy sparse module
     Attributes:
-        matrix: The actual stored matrix
+        matrix: The represented matrix
+        shape: The dimensions of the matrix represented
     """
 
     def __init__(self, matrix):
-        #assert not isinstance(matrix[0][0],list) #Ensure only 2D list 
-        self.matrix = csr_matrix(matrix)
-        self.matrix.eliminate_zeros()
-        self.shape = self.matrix.shape
-        
+        self.matrix = csr_matrix(matrix) #Define the represented matrix in sparse form
+        self.matrix.eliminate_zeros()    #Eliminate any explicit zeros 
+        self.shape = self.matrix.shape   #Define a shape attribute of the matrix
+
     def dot(self,matrix):
-        """dot/scalar product of two matrices
+        """dot product of two matrices
 
         Args:
-            matrix:A matrix, the same dimensions as the current matrix that will to be dotted with
+            matrix:A matrix like object, that will to be dotted with
         Returns:
-            The dot (scalar) product of two matrices A and B
+            The dot product of two matrices 
         
         Raises:
-            TypeError: on invalid maticie sizes 
+            AssertionError: Where the object being dotted with is not matrix like 
         """
         if (isinstance(matrix,SparseMatrix)):
             return type(self)(self.matrix.dot(matrix.matrix))
@@ -64,9 +65,15 @@ class SparseMatrix(object):
 
 
     def __str__(self):
+        """Provides a string representation if object is cast as such
+
+        """
         return str(np.array(self.matrix.toarray()))
 
     def __getitem__(self, index):
+        """Provides indexing of the object
+
+        """
         return self.matrix.A[index]
 
     def __add__(self,matrix):
@@ -128,25 +135,29 @@ class SparseMatrix(object):
 
 
     def __eq__(self,matrix):
+        """Provides an equality comparison for Matrix like objects
+
+        """
         if(self.matrix.nnz == matrix.matrix.nnz and \
            self.matrix.get_shape() == matrix.matrix.get_shape()): #Check number of items/shape is
                                                                 #the same as a quick initial check
             if(type(self.matrix) != type(matrix.matrix)):
                 try:
                     matrix = type(self)(matrix.matrix) #Allow for valid equivalence checking by 
-                                                       #casting the matrix to check equality with as
-                                                       #this type 
+                                                       #casting the matrix object as another, if
+                                                       #cannot create other object with this ones
+                                                       #matrix then cannot say they are the same
+                                                       
                 except:
                     return False # Can assume that if the data cannot be cast then not equal
             
-            # Can compare sorted components of the sparse array to check equal (also round data to 
-            # account for calculation errors)
-            return all(np.around(np.sort(self.matrix.data),4)==\
-                    np.around(np.sort(matrix.matrix.data),4))\
-                       and all(np.sort(self.matrix.indices) == np.sort(matrix.matrix.indices))\
-                       and all(np.sort(self.matrix.indptr)  == np.sort(matrix.matrix.indptr))
-                       #Compare wheter non zero elements have same data Not 100% sure sorting 
-                       #required, Probably also a more efficient method
+            # Can compare components of the sparse array to check equal (also round data to 
+            # account for calculation errors in the worst case)
+       
+            return all(np.around(self.matrix.data,4)==np.around(matrix.matrix.data,4))\
+                   and all(self.matrix.indices == matrix.matrix.indices)\
+                   and all(self.matrix.indptr  == matrix.matrix.indptr)
+
         else:
             return False
 
@@ -182,8 +193,8 @@ class SparseMatrix(object):
         NotImplemented
     
 class SquareMatrix(SparseMatrix):
-    """Sparse square matrix that provides basic functionallity
-
+    """Provides representation of a square sparse matrix
+    
     Attributes:
         matrix: A scipy sparse matrix storing data represented by matrix 
     """
@@ -203,9 +214,7 @@ class SquareMatrix(SparseMatrix):
         assert np.shape(matrix)[1] == np.shape(matrix)[0] #Ensure NxN matrix (i.e. square)
         
         
-        #assert not isinstance(matrix[0][0],list)          #Ensure only 2D list, 
-        #test doesn't work well with sparse martircies, consider different test or total removal 
-        super().__init__(matrix)
+        super().__init__(matrix) #Call parent operator
 
 class Vector(SparseMatrix): 
     """Vector (Row or column) representation that uses scipy sparse class  
@@ -223,12 +232,10 @@ class Vector(SparseMatrix):
         Raises:
             ValueError: On recieving invalid shaped list-like object
 
-
-        .. todo:: Override transpose and related functions to update 'type' attribute
         """
-        shape = np.shape(matrix)
+        shape = np.shape(matrix) #Set shape attribute
          
-        if(len(shape) == 1):
+        if(len(shape) == 1):#Set a simple attribute to describe the `type' of vector
             self.type = "row"
         
         elif(shape[1]==1): #Ensure is either column or row vector 
@@ -236,7 +243,9 @@ class Vector(SparseMatrix):
         else:
             raise ValueError("Cannot construct a vector with shape ",shape)
         
-        self.matrix = csc_matrix(matrix)
+        self.matrix = csc_matrix(matrix)#We use this for vector as it allows for simpler working 
+                                        #with measure later and also potentially more efficient 
+                                        #vector workings
         self.matrix.eliminate_zeros()
         self.dimension = np.shape(matrix)
     

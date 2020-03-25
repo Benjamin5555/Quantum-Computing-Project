@@ -74,22 +74,17 @@ class TestGrover(unittest.TestCase):
 
     def test_grover_5_qubit(self):
         reg_5_qubit = circuit_model.QuantumRegister([1],(2**5,1))
-        grov_5_qubit_string = ["HcHXcXHII",\
-                               "HcHXcXHII",\
-                               "HcHXcXHII",\
-                               "HcHXzXHII",\
-                               "HXIIIIIHX"]
+        grov_5_qubit_string = ["HXcXHXcXHII",\
+                               "HIcIHXcXHII",\
+                               "HXcXHXcXHII",\
+                               "HXcXHXzXHII",\
+                               "HIXIIIIIIHX"]
         
                           
         #print(grov_5_qubit_string)
         Grov_5_qbit = circuit_model.QuantumCircuit(grov_5_qubit_string,self.gates_dictionary) 
-        print(Grov_5_qbit.shape)
-        print(Grov_5_qbit)
         a = Grov_5_qbit.apply(reg_5_qubit)
         plt.plot(a.measure()[0],a.measure()[1])
         plt.show()
 
-"""
-if __name__ == 'main':
-    TestGrover.test_grover_5_qubit()
-"""
+
